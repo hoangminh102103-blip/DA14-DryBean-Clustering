@@ -3,5 +3,13 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Giữ lại cấu trúc thư mục nhưng bỏ qua file tự sinh & dữ liệu thô
+data/raw/DryBeanDataset/*
+!data/raw/DryBeanDataset/.gitkeep
 bao_cao/*
 !bao_cao/.gitkeep
+results/hinh/*
+!results/hinh/.gitkeep
+results/bang/*
+!results/bang/.gitkeep
