@@ -1,0 +1,7 @@
+.andromity/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+bao_cao/*
+!bao_cao/.gitkeep
