@@ -1,0 +1,236 @@
+/* =========================================================================
+   2. TOP NAVBAR & BỐ CỤC WORKBENCH 3 CỘT (250px | 1fr | 332px)
+   ========================================================================= */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--bg-paper);
+  border-bottom: 1.5px solid var(--border-subtle);
+  padding: 10px 16px;
+}
+
+.topbar-inner {
+  max-width: 1640px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--bg-panel);
+  border: var(--border-main);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-hard);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  background: var(--mint);
+  border: var(--border-main);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-hard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.brand-title span.tag-box {
+  background: var(--ink);
+  color: var(--bg-panel);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.top-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.top-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  background: transparent;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.top-tab:hover {
+  color: var(--ink);
+  background: rgba(30, 32, 30, 0.05);
+}
+
+.top-tab.active {
+  background: var(--mint);
+  color: var(--ink);
+  font-weight: 700;
+  border: var(--border-main);
+  box-shadow: var(--shadow-hard);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--bg-panel);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.meta-pill.student {
+  background: var(--ink);
+  color: var(--bg-panel);
+  border-color: var(--ink);
+}
+
+/* =========================================================================
+   3. WORKBENCH 3 CỘT
+   ========================================================================= */
+.workbench {
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 14px 16px 24px;
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr) 332px;
+  gap: 14px;
+  align-items: start;
+}
+
+.panel-box {
+  background: var(--bg-panel);
+  border: var(--border-main);
+  border-radius: var(--radius-lg);
+}
+
+/* --- CỘT TRÁI: SIDEBAR CÂY 6 MÀN HÌNH --- */
+.sidebar-left {
+  position: sticky;
+  top: 66px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100vh - 92px);
+  padding: 14px 12px;
+}
+
+/* --- CỘT GIỮA: MAIN STAGE --- */
+.main-stage {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* --- CỘT PHẢI: BẢNG ĐIỀU KHIỂN & GIẢI THÍCH NGỮ CẢNH --- */
+.sidebar-right {
+  position: sticky;
+  top: 66px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* =========================================================================
+   4. RESPONSIVE BREAKPOINTS (TABLET & MOBILE)
+   ========================================================================= */
+@media (max-width: 1260px) {
+  .workbench {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+  .sidebar-right {
+    grid-column: 1 / -1;
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 920px) {
+  .mobile-menu-btn {
+    display: inline-flex;
+  }
+  .workbench {
+    grid-template-columns: 1fr;
+  }
+  .sidebar-left {
+    display: none;
+    position: static;
+    min-height: auto;
+  }
+  .sidebar-left.mobile-open {
+    display: flex;
+  }
+  .sidebar-right {
+    grid-template-columns: 1fr;
+  }
+  .split-canvas-grid,
+  .info-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .kpi-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .info-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .timeline-steps {
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 12px;
+  }
+  .timeline-steps::before {
+    display: none;
+  }
+}

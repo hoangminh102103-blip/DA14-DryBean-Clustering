@@ -1,0 +1,65 @@
+/* =========================================================================
+   1. DESIGN TOKENS — RETRO-TACTILE NEO-BRUTALIST PAPER AESTHETIC
+   ========================================================================= */
+:root {
+  --bg-paper: #F4F1EA;
+  --bg-panel: #FAF9F5;
+  --bg-canvas: #F9F7F2;
+  --grid-line: #E6E2D8;
+  --ink: #1E201E;
+  --ink-muted: #575852;
+  --ink-subtle: #888880;
+  --border-subtle: #CFCBC0;
+
+  /* Bảng màu nhấn pastel đặc trưng */
+  --mint: #D9F2C6;
+  --mint-strong: #CBE8BA;
+  --yellow: #FDF3C7;
+  --lavender: #EAE4FA;
+  --blue-pastel: #D6ECFA;
+  --coral: #F8C8B8;
+  --coral-strong: #F2A891;
+
+  /* Màu định danh thuật toán */
+  --kmeans-color: #2563EB;
+  --kmedoids-color: #0F766E;
+  --outlier-color: #DC2626;
+
+  --border-main: 1.5px solid var(--ink);
+  --shadow-hard: 2px 2px 0px var(--ink);
+  --shadow-hard-lg: 3px 3px 0px var(--ink);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  min-height: 100vh;
+  background-color: var(--bg-paper);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.bg-yellow { background: var(--yellow); }
+.bg-blue { background: var(--blue-pastel); }
+.bg-lavender { background: var(--lavender); }
+.bg-mint { background: var(--mint); }
+.bg-coral { background: var(--coral); }
