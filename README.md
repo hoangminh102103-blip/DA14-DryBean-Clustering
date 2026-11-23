@@ -1,8 +1,6 @@
-
 # DA14-DryBean: Phân cụm 7 giống đậu khô (Mean vs. Medoid)
 
 Đồ án kết thúc học phần: **DA-14 — Bảy giống đậu khô nhìn từ bóng của chúng: tâm trung bình hay medoid?**
-
 
 ## 1. Tải và chuẩn bị dữ liệu
 
@@ -20,7 +18,6 @@
 
 ---
 
-
 ## 2. Cài đặt môi trường ảo (Dành cho thành viên mới clone dự án)
 
 1. Tại thư mục gốc của dự án, nháy đúp chuột vào tệp **`setup.bat`** (hoặc chạy lệnh `.\setup.bat` trong Terminal) để hệ thống tự động tạo môi trường ảo `.venv` và cài đặt toàn bộ thư viện trong `requirements.txt`.
@@ -29,7 +26,6 @@
 4. Mở Terminal mới trong VS Code (`Ctrl + ~`), đảm bảo thấy chữ `(.venv)` xuất hiện ở đầu dòng lệnh trước khi chạy code.
 
 ---
-
 
 ## 3. Quy trình chạy từng bước
 
@@ -65,6 +61,48 @@ python analysis/kham_pha.py
   - Tự động sinh tệp báo cáo kèm nhận xét chi tiết cho từng biểu đồ: `bao_cao/Bao_Cao_DA14_DryBean_Buoc2.md`.
 
 ---
+
+
+### Bước 4: Hướng dẫn mở Server và xem giao diện Web trên Localhost
+
+Chạy lệnh ở dưới và kiểm tra trong folder result có file `da14_web_data.json` chưa. Lệnh này tự động gom dữ liệu thật và bảng thực nghiệm thành tệp **`results/da14_web_data.json`**
+
+```
+Xuất 1 tệp JSON duy nhất để hiển thị lên giao diện Web:
+
+python app/export_json_web.py
+```
+
+Để xem kết quả trực quan trên giao diện web thực hiện theo 3 bước sau:
+
+1. **Mở Terminal tại thư mục chứa mã nguồn Web (`da14_dry_bean_web`):**
+
+   ```
+   cd duong/dan/toi/da14_dry_bean_web
+   ```
+
+   *(Lưu ý: Mở Terminal ngay tại thư mục chứa tệp `index.html` của web).*
+2. **Khởi chạy máy chủ cục bộ (Local Server) ở cổng `8080`:**
+
+   ```
+   python -m http.server 8080
+   ```
+
+   * Khi Terminal hiện dòng `Serving HTTP on :: port 8080 (http://[::]:8080/) ...` nghĩa là server đã bật thành công. **Giữ nguyên cửa sổ Terminal này, không tắt đi trong lúc xem web.**
+3. **Mở trình duyệt và truy cập đường dẫn Localhost:**
+
+   * Mở Chrome, Edge hoặc Brave và nhập vào thanh địa chỉ:
+
+```
+	http://localhost:8080
+```
+
+* *(Nếu bạn bật server ở thư mục cha bên ngoài, hãy bấm vào thư mục `da14_dry_bean_web/` hiển thị trên màn hình hoặc truy cập `http://localhost:8080/da14_dry_bean_web/`).*
+
+4. **Nạp dữ liệu thật của nhóm lên Web:**
+   * Trên thanh công cụ góc trên bên phải của trang web, bấm nút  **`results/ JSON`** .
+   * Chọn tệp **`da14_web_data.json`**  -> giao diện sẽ cập nhật ngay toàn bộ biểu đồ và bảng số liệu thật của nhóm.
+   * Khi xem xong, quay lại cửa sổ Terminal và nhấn **`Ctrl + C`** để tắt server.
 
 ## 4. Lưu ý khi làm việc nhóm trên Git
 
