@@ -333,6 +333,9 @@ window.DA14_DATA_ADAPTER = {
   getBeans: () => beansData,
   loadFromResults(jsonData) {
     if (!jsonData || typeof jsonData !== 'object') return;
+    if (jsonData.pcaModel) {
+      window.REAL_PCA_MODEL = jsonData.pcaModel;
+    }
     if (Array.isArray(jsonData.beans) && jsonData.beans.length > 0) {
       beansData = jsonData.beans.map((item, idx) => ({
         id: item.id ?? idx,
@@ -347,6 +350,25 @@ window.DA14_DATA_ADAPTER = {
         pcClean: new Float64Array(item.pc),
         pcCurrent: new Float64Array(item.pc)
       }));
+
+      FEATURE_META.forEach((f, fIdx) => {
+        let sum = 0, minVal = Infinity, maxVal = -Infinity;
+        for (let i = 0; i < beansData.length; i++) {
+          const val = beansData[i].rawFeaturesArr[fIdx];
+          sum += val;
+          if (val < minVal) minVal = val;
+          if (val > maxVal) maxVal = val;
+        }
+        const mean = sum / beansData.length;
+        let sqSum = 0;
+        for (let i = 0; i < beansData.length; i++) {
+          const d = beansData[i].rawFeaturesArr[fIdx] - mean;
+          sqSum += d * d;
+        }
+        featureStats[f.key] = { mean, std: Math.sqrt(sqSum / beansData.length) || 1, min: minVal, max: maxVal };
+      });
+
+      initScreen2Content();
       recomputeAll(false);
     }
     if (jsonData.benchmarkTable) {

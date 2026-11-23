@@ -140,8 +140,21 @@ function updateActiveCoordinates() {
     if (state.standardized) {
       if (!isOut) {
         for (let d = 0; d < 16; d++) b.pcCurrent[d] = b.pcClean[d];
+      } else if (window.REAL_PCA_MODEL) {
+        // Nhân cột Area (index 0) rồi chuẩn hóa & chiếu lại qua PCA thật giống Python
+        const { mean, std, components } = window.REAL_PCA_MODEL;
+        const z = new Float64Array(16);
+        for (let j = 0; j < 16; j++) {
+          const rawVal = j === 0 ? b.rawFeaturesArr[0] * outlierMultiplier : b.rawFeaturesArr[j];
+          z[j] = (rawVal - mean[j]) / std[j];
+        }
+        for (let d = 0; d < 16; d++) {
+          let sum = 0;
+          for (let j = 0; j < 16; j++) sum += z[j] * components[d][j];
+          b.pcCurrent[d] = sum;
+        }
       } else {
-        // 1% hạt ngoại lai bị nhân kích thước kéo PC1 lệch mạnh (+25 sigma)
+        // Dự phòng khi chưa nạp file JSON thật
         b.pcCurrent[0] = b.pcClean[0] + 25.0 + (i % 7) * 1.1;
         b.pcCurrent[1] = b.pcClean[1] + 2.6;
         for (let d = 2; d < 16; d++) b.pcCurrent[d] = b.pcClean[d] * 1.35;

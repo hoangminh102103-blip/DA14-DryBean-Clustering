@@ -95,11 +95,10 @@ window.addEventListener('DOMContentLoaded', () => {
   recomputeAll(false);
   switchScreen(6);
 
-  fetch('./web_data_buoc1_2.json')
+  fetch('./da14_web_data.json')
     .then(res => res.ok ? res.json() : null)
     .then(data => {
       if (data) window.DA14_DATA_ADAPTER.loadFromResults(data);
     })
     .catch(() => {});
-    
 });

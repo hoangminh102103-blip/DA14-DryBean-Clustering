@@ -60,10 +60,7 @@ python analysis/kham_pha.py
   - Lưu bảng liệt kê đủ 21 cặp đặc trưng có tương quan tuyệt đối $|r| > 0.9$ tại `results/bang/bang_21_cap_tuong_quan_tren_09.csv`.
   - Tự động sinh tệp báo cáo kèm nhận xét chi tiết cho từng biểu đồ: `bao_cao/Bao_Cao_DA14_DryBean_Buoc2.md`.
 
----
-
-
-### Bước 4: Hướng dẫn mở Server và xem giao diện Web trên Localhost
+### Bước 3: Hướng dẫn mở Server và xem giao diện Web trên Localhost
 
 Chạy lệnh ở dưới và kiểm tra trong folder result có file `da14_web_data.json` chưa. Lệnh này tự động gom dữ liệu thật và bảng thực nghiệm thành tệp **`results/da14_web_data.json`**
 
