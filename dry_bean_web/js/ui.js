@@ -9,10 +9,10 @@ function updateKpiAndInspectorUI() {
   document.getElementById('kpiAriMed').textContent = m.kmedoidsARI.toFixed(3);
   document.getElementById('kpiSilhouette').textContent = m.kmedoidsSil.toFixed(3);
   document.getElementById('kpiCentroidShift').textContent = `${m.centroidShift.toFixed(2)} σ`;
-  document.getElementById('kpiConfigText').textContent = `k=${state.k} · ${state.pcaDims}D · ${state.standardized ? 'Scaled' : 'Raw'}`;
+  document.getElementById('kpiConfigText').textContent = `k=${state.k} · PCA ${state.pcaDims}D · ${state.standardized ? 'Z-score' : 'Giá trị gốc'}`;
 
-  document.getElementById('footKmStatus').textContent = `ARI = ${m.kmeansARI.toFixed(3)}`;
-  document.getElementById('footMedStatus').textContent = `ARI = ${m.kmedoidsARI.toFixed(3)}`;
+  document.getElementById('footKmStatus').textContent = `Độ khớp ARI = ${m.kmeansARI.toFixed(3)}`;
+  document.getElementById('footMedStatus').textContent = `Độ khớp ARI = ${m.kmedoidsARI.toFixed(3)}`;
 
   const kmCard = document.getElementById('kpiCardKmeans');
   const medCard = document.getElementById('kpiCardKmedoids');
@@ -52,10 +52,10 @@ function updateKpiAndInspectorUI() {
 
   const beanCode = `#Bean_${String(bean.id).padStart(5, '0')}`;
   document.getElementById('medoidActiveTag').textContent = `M${cIdx + 1}`;
-  document.getElementById('footSelectedMedoid').textContent = `M${cIdx + 1} (${beanCode})`;
+  document.getElementById('footSelectedMedoid').textContent = `M${cIdx + 1} (${beanCode} · ${bean.varietyLabel})`;
   document.getElementById('medoidMetaBanner').innerHTML = `
-    Hạt thật: <strong>${beanCode}</strong> · Giống: <strong>${bean.varietyLabel}</strong>
-    <span style="display:block; font-size:10px; color:var(--ink-muted);">Tọa độ chiếu: PC1=${bean.pcCurrent[0].toFixed(2)}, PC2=${bean.pcCurrent[1].toFixed(2)}</span>
+    Hạt mẫu thật: <strong>${beanCode}</strong> · Giống: <strong>${bean.varietyLabel}</strong>
+    <span style="display:block; font-size:11px; color:var(--ink-muted); margin-top:2px;">Vị trí trên bản đồ: PC1 = ${bean.pcCurrent[0].toFixed(2)}, PC2 = ${bean.pcCurrent[1].toFixed(2)}</span>
   `;
 
   const pillsWrap = document.getElementById('medoidQuickPills');
@@ -78,8 +78,8 @@ function updateKpiAndInspectorUI() {
     const val = bean.features[f.key];
     const formatted = val >= 100 ? val.toFixed(1) : (val >= 1 ? val.toFixed(3) : val.toFixed(5));
     return `
-      <div class="feat-cell">
-        <span class="feat-name">${f.key}</span>
+      <div class="feat-cell" title="${f.desc}">
+        <span class="feat-name"><strong>${f.viName || f.key}</strong> (${f.key} · ${f.unit})</span>
         <span class="feat-val">${formatted}</span>
       </div>
     `;
@@ -93,18 +93,18 @@ function syncControlsFromState() {
   document.getElementById('sliderPCA').value = state.pcaDims;
   let cum = 0;
   for (let i = 0; i < state.pcaDims; i++) cum += PCA_VARIANCE_RATIO[i] * 100;
-  document.getElementById('badgePCA').textContent = `d = ${state.pcaDims} (${cum.toFixed(1)}%)`;
+  document.getElementById('badgePCA').textContent = `d = ${state.pcaDims} (${cum.toFixed(1)}% thông tin)`;
 
   const stdPill = document.getElementById('stdPillBadge');
   const stdSub = document.getElementById('stdSubLabel');
   if (state.standardized) {
-    stdPill.textContent = 'BẬT';
+    stdPill.textContent = 'ĐANG BẬT';
     stdPill.className = 'switch-pill bg-mint';
-    stdSub.textContent = 'Cân bằng kích thước & hình dáng';
+    stdSub.textContent = 'Đưa 16 thông số về cùng thang Z-score';
   } else {
-    stdPill.textContent = 'TẮT';
+    stdPill.textContent = 'ĐANG TẮT';
     stdPill.className = 'switch-pill bg-coral';
-    stdSub.textContent = 'Cảnh báo: Chỉ còn phân lớp theo Area!';
+    stdSub.textContent = 'Cảnh báo: Cột Diện tích đè bẹp 15 cột kia!';
   }
 
   const btnQuickOut = document.getElementById('btnQuickOutlier');
@@ -195,12 +195,12 @@ function initScreen1Content() {
 
 function initScreen2Content() {
   const sel = document.getElementById('edaSelectFeature');
-  sel.innerHTML = FEATURE_META.map(f => `<option value="${f.key}">${f.key} (${f.group})</option>`).join('');
+  sel.innerHTML = FEATURE_META.map(f => `<option value="${f.key}">${f.viName || f.key} — ${f.key} (${f.group})</option>`).join('');
   sel.onchange = (e) => { state.edaFeature = e.target.value; drawEdaBoxplot(); };
 
   document.getElementById('btnToggleEdaZscore').onclick = (e) => {
     state.edaZscore = !state.edaZscore;
-    e.target.textContent = state.edaZscore ? 'Thang đo: Chuẩn hóa (Z-score)' : 'Thang đo: Giá trị gốc (Raw)';
+    e.target.textContent = state.edaZscore ? 'Thang đo: Chuẩn hóa Z-score (σ)' : 'Thang đo: Giá trị đo gốc';
     drawEdaBoxplot();
   };
 
@@ -211,9 +211,9 @@ function initScreen2Content() {
     return `
       <tr style="cursor:pointer;" onclick="document.getElementById('edaSelectFeature').value='${f.key}'; state.edaFeature='${f.key}'; drawEdaBoxplot();">
         <td>${idx + 1}</td>
-        <td><strong>${f.key}</strong></td>
+        <td><strong>${f.viName || f.key}</strong> <span style="color:var(--ink-muted); font-size:11.5px;">(${f.key} · ${f.unit})</span></td>
         <td>${f.group}</td>
-        <td>${f.desc}</td>
+        <td style="white-space:normal; min-width:220px;">${f.desc}</td>
         <td class="tabular">${fmt(st.mean)}</td>
         <td class="tabular">${fmt(st.std)}</td>
       </tr>
@@ -225,7 +225,7 @@ function initScreen4Mechanism() {
   document.getElementById('btnMechToggleOutlier').onclick = (e) => {
     state.mechOutlier = !state.mechOutlier;
     e.target.classList.toggle('active-outlier', state.mechOutlier);
-    e.target.textContent = state.mechOutlier ? '⚡ Ngoại lai: ĐANG BẬT' : '⚡ Ngoại lai: ĐÃ TẮT';
+    e.target.textContent = state.mechOutlier ? '⚡ Điểm ngoại lai: ĐANG BẬT' : '⚡ Điểm ngoại lai: ĐÃ TẮT';
     drawMechanismDemoCanvas();
   };
   document.getElementById('btnMechNextIter').onclick = () => {
@@ -244,6 +244,8 @@ window.selectExpDim = function (dim) {
 
 function renderBenchmarkTable() {
   const rows = BENCHMARK_DATA[state.expDim] || BENCHMARK_DATA[2];
+  const fmtDelta = (v) => `${v >= 0 ? '+' : ''}${v.toFixed(3)}`;
+  const clsDelta = (v) => (v >= -0.015 ? 'delta-good' : 'delta-bad');
   document.getElementById('benchmarkTableBody').innerHTML = rows.map(r => `
     <tr class="${r.k === 7 ? 'row-highlight' : ''}">
       <td style="text-align:center; font-weight:700;">${r.k}</td>
@@ -252,20 +254,21 @@ function renderBenchmarkTable() {
       <td>${r.cSil}</td>
       <td>${r.cTime}</td>
       <td>${r.oMed}</td>
-      <td class="delta-bad">${r.oKm}</td>
+      <td class="${Number(r.dKm) < -0.015 ? 'delta-bad' : ''}">${r.oKm}</td>
       <td>${r.oSil}</td>
       <td>${r.oTime}</td>
-      <td class="delta-good">${r.dMed.toFixed(3)}</td>
-      <td class="delta-bad">${r.dKm.toFixed(3)}</td>
+      <td class="${clsDelta(r.dMed)}">${fmtDelta(r.dMed)}</td>
+      <td class="${clsDelta(r.dKm)}">${fmtDelta(r.dKm)}</td>
     </tr>
   `).join('');
 }
 
 window.copyBenchmarkMarkdown = function () {
   const rows = BENCHMARK_DATA[state.expDim];
-  let md = `| k | ARI Medoids (Sạch) | ARI K-Means (Sạch) | Silhouette | Time (s) | ARI Medoids (1% Ngoại lai) | ARI K-Means (1% Ngoại lai) | Δ Medoids | Δ K-Means |\n|---|---|---|---|---|---|---|---|---|\n`;
+  let md = `| k | ARI K-Medoids (Sạch) | ARI K-Means (Sạch) | Hệ số bóng | Thời gian (s) | ARI K-Medoids (1% Ngoại lai) | ARI K-Means (1% Ngoại lai) | Δ K-Medoids | Δ K-Means |\n|---|---|---|---|---|---|---|---|---|\n`;
   rows.forEach(r => {
-    md += `| ${r.k} | ${r.cMed} | ${r.cKm} | ${r.cSil} | ${r.cTime} | ${r.oMed} | ${r.oKm} | ${r.dMed.toFixed(3)} | ${r.dKm.toFixed(3)} |\n`;
+    const fm = (v) => `${v >= 0 ? '+' : ''}${v.toFixed(3)}`;
+    md += `| ${r.k} | ${r.cMed} | ${r.cKm} | ${r.cSil} | ${r.cTime} | ${r.oMed} | ${r.oKm} | ${fm(r.dMed)} | ${fm(r.dKm)} |\n`;
   });
   copyRawString(md, 'btnCopyBenchmarkMd', '⎘ Chép bảng Markdown');
 };
@@ -335,6 +338,9 @@ window.DA14_DATA_ADAPTER = {
     if (!jsonData || typeof jsonData !== 'object') return;
     if (jsonData.pcaModel) {
       window.REAL_PCA_MODEL = jsonData.pcaModel;
+      if (Array.isArray(jsonData.pcaModel.explainedVarianceRatio) && jsonData.pcaModel.explainedVarianceRatio.length === 16) {
+        PCA_VARIANCE_RATIO.splice(0, PCA_VARIANCE_RATIO.length, ...jsonData.pcaModel.explainedVarianceRatio);
+      }
     }
     if (Array.isArray(jsonData.beans) && jsonData.beans.length > 0) {
       beansData = jsonData.beans.map((item, idx) => ({

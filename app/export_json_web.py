@@ -7,20 +7,21 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
 from data.nap import doc_va_kiem_ke
+from data.tien_xu_ly import ap_chuan_hoa, khop_chuan_hoa
+from models.pca import chieu, khop_pca
 
 
 def xuat_du_lieu_web():
     duong_dan_arff = ROOT_DIR / "data" / "raw" / "DryBeanDataset" / "Dry_Bean_Dataset.arff"
     df, X, y = doc_va_kiem_ke(duong_dan_arff)
 
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+    # Tái sử dụng đúng bộ chuẩn hóa và PCA-SVD tự viết của dự án (quy ước 07b)
+    scaler = khop_chuan_hoa(X)
+    X_scaled = ap_chuan_hoa(scaler, X)
 
-    pca = PCA(n_components=16)
-    X_pca = pca.fit_transform(X_scaled)
+    pca_mh = khop_pca(X_scaled)
+    X_pca = chieu(pca_mh, X_scaled, 16)
 
     feature_cols = list(X.columns)
     beans_payload = [
@@ -40,7 +41,8 @@ def xuat_du_lieu_web():
         "pcaModel": {
             "mean": [round(float(v), 6) for v in scaler.mean_],
             "std": [round(float(v), 6) for v in scaler.scale_],
-            "components": [[round(float(c), 6) for c in row] for row in pca.components_],
+            "components": [[round(float(c), 6) for c in row] for row in pca_mh["Vt"]],
+            "explainedVarianceRatio": [round(float(v), 6) for v in pca_mh["ty_le"]],
         },
     }
 
@@ -53,15 +55,19 @@ def xuat_du_lieu_web():
 
     duong_dan_xuat = ROOT_DIR / "results" / "da14_web_data.json"
     duong_dan_xuat.parent.mkdir(parents=True, exist_ok=True)
-    with open(duong_dan_xuat, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False)
+    json_str = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+    duong_dan_xuat.write_text(json_str, encoding="utf-8")
     print(f"[OK] Đã xuất JSON tại: {duong_dan_xuat}")
 
-    # Tự động chép sang thư mục web nếu đặt cùng thư mục gốc
-    thu_muc_web = ROOT_DIR / "da14_dry_bean_web"
-    if thu_muc_web.exists():
-        shutil.copy2(duong_dan_xuat, thu_muc_web / "da14_web_data.json")
-        print(f"[OK] Đã đồng bộ sang: {thu_muc_web / 'da14_web_data.json'}")
+    # Đồng bộ sang thư mục web (cả JSON lẫn JS preload để mở trực tiếp file:// index.html không bị CORS)
+    for ten_thu_muc in ("dry_bean_web", "da14_dry_bean_web"):
+        thu_muc_web = ROOT_DIR / ten_thu_muc
+        if thu_muc_web.exists():
+            shutil.copy2(duong_dan_xuat, thu_muc_web / "da14_web_data.json")
+            js_bundle = thu_muc_web / "js" / "da14_web_data.js"
+            js_bundle.parent.mkdir(parents=True, exist_ok=True)
+            js_bundle.write_text(f"window.DA14_PRELOADED_DATA = {json_str};\n", encoding="utf-8")
+            print(f"[OK] Đã đồng bộ JSON + JS preload sang: {thu_muc_web}")
 
 
 if __name__ == "__main__":

@@ -92,13 +92,20 @@ window.addEventListener('DOMContentLoaded', () => {
   bindSynchronizedCanvasControls(canvasKMedoids, true);
   bindCurveChartEvents();
 
-  recomputeAll(false);
-  switchScreen(6);
+  if (window.DA14_PRELOADED_DATA) {
+    window.DA14_DATA_ADAPTER.loadFromResults(window.DA14_PRELOADED_DATA);
+    switchScreen(6);
+    const stEl = document.getElementById('adapterLoadStatus');
+    if (stEl) stEl.textContent = '✓ Đã tự nạp sẵn dữ liệu thật (13.611 hạt & bảng 10 seeds)!';
+  } else {
+    recomputeAll(false);
+    switchScreen(6);
 
-  fetch('./da14_web_data.json')
-    .then(res => res.ok ? res.json() : null)
-    .then(data => {
-      if (data) window.DA14_DATA_ADAPTER.loadFromResults(data);
-    })
-    .catch(() => {});
+    fetch('./da14_web_data.json')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data) window.DA14_DATA_ADAPTER.loadFromResults(data);
+      })
+      .catch(() => {});
+  }
 });

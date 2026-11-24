@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DA14 · Animation Từ Con Số 0 Đến Hoàn Chỉnh Bài</title>
+  <link rel="stylesheet" href="../dry_bean_web/css/tokens.css" />
+  <link rel="stylesheet" href="css/animation.css" />
+</head>
+<body>
+  <div class="anim-shell">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="anim-topbar">
+      <div class="anim-topbar-inner">
+        <div class="anim-brand">
+          <div class="anim-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <polygon points="5 3 19 12 5 21 5 3" fill="#D9F2C6"/>
+            </svg>
+            <span>DA14 · ANIMATION</span>
+          </div>
+          <div class="anim-heading-group">
+            <h1>Hành trình Từ Con Số 0 → Hoàn Chỉnh Đồ Án Phân Cụm Đậu Khô</h1>
+            <span>Dữ liệu thật 13.611 hạt · Chạy từng vòng lặp thực tế &amp; Kiểm chứng 10 seeds (15DHTH07)</span>
+          </div>
+        </div>
+
+        <div class="anim-top-actions">
+          <a class="nav-link-btn" href="../index.html">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            <span>Mở Phòng thí nghiệm Tương tác</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN STAGE WORKSPACE -->
+    <main class="anim-workspace">
+      <section class="stage-panel" aria-label="Sân khấu trình diễn animation">
+        <div class="scene-header">
+          <div class="scene-title-block">
+            <div id="sceneBadge" class="scene-progress-pill" style="background: var(--blue-pastel);">CHƯƠNG 1 / 7 · KHỞI ĐIỂM</div>
+            <h2 id="sceneTitle" class="scene-title">Bắt đầu từ con số 0: Nạp 13.611 hạt đậu &amp; Phơi bày lệch thang đo</h2>
+          </div>
+          <div id="formulaBadge" class="formula-chip">Area ∈ [18k, 254k px²] ≫ ShapeFactor1 ≈ 0.004</div>
+        </div>
+
+        <!-- CANVAS + FINALE OVERLAY -->
+        <div class="canvas-stage-frame">
+          <canvas id="storyCanvas"></canvas>
+
+          <!-- Bảng tổng kết hoàn chỉnh hiện mượt ở Chương 7 -->
+          <div id="finaleOverlay" class="finale-overlay" aria-label="Tổng hợp hoàn chỉnh kết quả 10 seed">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                <div>
+                  <h3 style="font-size:18px; font-weight:700;">Tổng kết hoàn chỉnh bài: 10 lần chạy (n = 3.000/seed, k = 7)</h3>
+                  <span style="font-size:12.5px; color:var(--ink-muted);">So sánh định lượng Mean ± SD từ đầu ra thực nghiệm Python (<code>results/bang/</code>)</span>
+                </div>
+                <a class="nav-link-btn" href="../index.html">Tự thử nghiệm thông số ở Phòng Lab →</a>
+              </div>
+
+              <div class="finale-table-wrap">
+                <table class="finale-table">
+                  <thead>
+                    <tr>
+                      <th>Không gian</th>
+                      <th>K-Medoids (Sạch)</th>
+                      <th>K-Means (Sạch)</th>
+                      <th>Wilcoxon p (Sạch)</th>
+                      <th>K-Medoids (1% Nhiễu)</th>
+                      <th>K-Means (1% Nhiễu)</th>
+                      <th>Δ K-Medoids</th>
+                      <th>Δ K-Means</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>PCA d = 2 (81,9%)</td>
+                      <td>0,660 ± 0,048</td>
+                      <td>0,681 ± 0,026</td>
+                      <td>0,13086</td>
+                      <td>0,651 ± 0,049</td>
+                      <td>0,679 ± 0,006</td>
+                      <td style="color:#065F46; font-weight:700;">-0,008</td>
+                      <td style="color:#065F46;">-0,002</td>
+                    </tr>
+                    <tr>
+                      <td>PCA d = 4 (95,0%)</td>
+                      <td>0,626 ± 0,029</td>
+                      <td>0,659 ± 0,007</td>
+                      <td>0,00586</td>
+                      <td>0,616 ± 0,026</td>
+                      <td>0,652 ± 0,007</td>
+                      <td style="color:#065F46;">-0,010</td>
+                      <td style="color:#065F46;">-0,007</td>
+                    </tr>
+                    <tr class="is-k7">
+                      <td>Gốc d = 16 (Chuẩn hóa)</td>
+                      <td>0,695 ± 0,015</td>
+                      <td>0,665 ± 0,007</td>
+                      <td>0,00195 (PAM thắng)</td>
+                      <td>0,689 ± 0,016</td>
+                      <td>0,598 ± 0,064</td>
+                      <td style="color:#065F46;">-0,006 (Bền)</td>
+                      <td style="color:#991B1B;">-0,067 (Tụt mạnh)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="finale-grid-3">
+              <div class="finale-card">
+                <h3>1. Giá trị tiền xử lý &amp; PCA</h3>
+                <ul>
+                  <li><strong>Chưa chuẩn hóa Z-score:</strong> K-Means chỉ đạt <code>ARI = 0,379 ± 0,011</code> vì biến Area áp đảo hoàn toàn 15 biến dáng.</li>
+                  <li><strong>Ngưỡng PCA (trên tập train):</strong> <code>2 trục = 81,9%</code>, <code>4 trục = 95,0%</code>, <code>7 trục = 99,6%</code> (đỉnh ARI).</li>
+                </ul>
+              </div>
+              <div class="finale-card">
+                <h3>2. Đối chiếu Mốc cơ sở (Baselines)</h3>
+                <ul>
+                  <li><strong>Dummy (lớp đông nhất DERMASON):</strong> Accuracy <code>26,04%</code>, <code>ARI = 0,000</code>.</li>
+                  <li><strong>Mốc trên Random Forest:</strong> <code>92,03%</code> trên 16D (<code>ARI = 0,810</code>) và <code>92,88%</code> trên PCA d=7 (<code>ARI = 0,828</code>).</li>
+                </ul>
+              </div>
+              <div class="finale-card">
+                <h3>3. Mở rộng A: Mahalanobis SVD</h3>
+                <ul>
+                  <li><strong>Kết quả k=7 (10 seeds):</strong> SVD <code>pinv</code> tụt còn <code>0,489 ± 0,047</code>; Tikhonov lên <code>0,555 ± 0,057</code> (vẫn dưới Euclid <code>0,695</code>).</li>
+                  <li><strong>Nguyên nhân:</strong> 21 cặp tương quan <code>|r| &gt; 0,9</code> làm <code>cond(Cov_d) = 30.738 &gt; 10⁴</code> từ <code>d = 12</code>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTITLE NARRATION -->
+        <div class="narration-banner">
+          <div class="narration-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="narration-body">
+            <span id="narrationPhaseTag" class="narration-phase-tag">Nhịp 1 / 3 · Nạp dữ liệu từ số 0</span>
+            <div id="narrationText" class="narration-text">
+              Bắt đầu từ tập rỗng (0 hạt): máy tính lần lượt đọc các bản ghi chụp ảnh từng giống đậu...
+            </div>
+          </div>
+        </div>
+
+        <!-- DẢI ĐÁNH GIÁ LIÊN TỤC (NỐI LIỀN CÁC CHỈ SỐ TỪ CHƯƠNG 1 ĐẾN CHƯƠNG 7) -->
+        <div class="eval-strip" aria-label="Đánh giá trực tiếp liên hoàn">
+          <div class="eval-strip-head">
+            <strong style="font-size:13px;">Đánh giá định lượng &amp; Nhận xét tức thời</strong>
+            <span id="evalVerdictPill" class="eval-verdict-pill">Đang nạp dữ liệu ban đầu...</span>
+          </div>
+          <div class="eval-meter-grid">
+            <div class="eval-meter">
+              <div class="eval-meter-top"><span>Độ khớp giống thật (ARI)</span><strong id="valBarAri">38%</strong></div>
+              <div class="eval-bar-track"><div id="fillBarAri" class="eval-bar-fill" style="background:#0F766E;"></div></div>
+            </div>
+            <div class="eval-meter">
+              <div class="eval-meter-top"><span>Độ tinh khiết cụm (Purity)</span><strong id="valBarPurity">45%</strong></div>
+              <div class="eval-bar-track"><div id="fillBarPurity" class="eval-bar-fill" style="background:#1D4ED8;"></div></div>
+            </div>
+            <div class="eval-meter">
+              <div class="eval-meter-top"><span>Độ bền cấu trúc / Kháng nhiễu</span><strong id="valBarRobust">30%</strong></div>
+              <div class="eval-bar-track"><div id="fillBarRobust" class="eval-bar-fill" style="background:#D97706;"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HAI KHỐI GIẢI THÍCH SÂU: 1 BÊN LÝ THUYẾT · 1 BÊN CODE PYTHON THỰC TẾ -->
+        <div class="deep-explain-grid">
+          <article id="theoryExplainCard" class="explain-card is-theory" aria-label="Giải thích cơ chế theo lý thuyết"></article>
+          <article id="codeExplainCard" class="explain-card is-code" aria-label="Giải thích cơ chế theo code đồ án"></article>
+        </div>
+      </section>
+
+      <!-- RIGHT TELEMETRY SIDEBAR -->
+      <aside class="telemetry-sidebar" aria-label="Bảng 8 ô đánh giá trực tiếp theo animation">
+        <div class="side-card">
+          <div class="side-card-title">
+            <span>9 Ô ĐÁNH GIÁ LIÊN HOÀN</span>
+            <span style="font-family:var(--font-mono);">k = 7 · 16D</span>
+          </div>
+          <div class="live-kpi-grid">
+            <div class="live-kpi-cell">
+              <div class="live-kpi-label">1. SỐ HẠT &amp; NHIỄU</div>
+              <div id="liveBeans" class="live-kpi-val">0</div>
+              <div id="liveOutlierSub" class="live-kpi-sub">Ngoại lai: 0 (0%)</div>
+            </div>
+            <div class="live-kpi-cell">
+              <div class="live-kpi-label">2. PHA / VÒNG LẶP</div>
+              <div id="liveIter" class="live-kpi-val" style="font-size:15px;">Chuẩn bị</div>
+              <div class="live-kpi-sub">Tiến trình thuật toán</div>
+            </div>
+            <div id="kpiBoxKm" class="live-kpi-cell">
+              <div class="live-kpi-label">3. ARI · K-MEANS (+)</div>
+              <div class="live-kpi-val-row">
+                <div id="liveAriKm" class="live-kpi-val">—</div>
+                <span id="liveDeltaKm" class="live-kpi-delta" style="display:none;"></span>
+              </div>
+              <div class="live-kpi-sub">Khớp nhãn thật (0 → 1)</div>
+            </div>
+            <div id="kpiBoxMed" class="live-kpi-cell">
+              <div class="live-kpi-label">4. ARI · K-MEDOIDS (◉)</div>
+              <div class="live-kpi-val-row">
+                <div id="liveAriMed" class="live-kpi-val">—</div>
+                <span id="liveDeltaMed" class="live-kpi-delta" style="display:none;"></span>
+              </div>
+              <div class="live-kpi-sub">Hạt thật đại diện (0 → 1)</div>
+            </div>
+            <div class="live-kpi-cell">
+              <div class="live-kpi-label">5. NMI (K-MEANS / PAM)</div>
+              <div id="liveNmiPair" class="live-kpi-val" style="font-size:14.5px;">—</div>
+              <div class="live-kpi-sub">Thông tin tương hỗ chuẩn hóa</div>
+            </div>
+            <div class="live-kpi-cell">
+              <div class="live-kpi-label">6. SILHOUETTE (KM / PAM)</div>
+              <div id="liveSilPair" class="live-kpi-val" style="font-size:14.5px;">—</div>
+              <div class="live-kpi-sub">Độ tách gọn hình học</div>
+            </div>
+            <div class="live-kpi-cell">
+              <div class="live-kpi-label">7. PURITY (KM / PAM)</div>
+              <div id="livePurityPair" class="live-kpi-val" style="font-size:14.5px;">—</div>
+              <div class="live-kpi-sub">Tỉ lệ thuần giống (%)</div>
+            </div>
+            <div class="live-kpi-cell">
+              <div class="live-kpi-label">8. MỤC TIÊU (SSE / L1)</div>
+              <div id="liveCostPair" class="live-kpi-val" style="font-size:13px;">—</div>
+              <div class="live-kpi-sub">Tổng bình phương vs L1</div>
+            </div>
+            <div id="kpiBoxShift" class="live-kpi-cell" style="grid-column: span 2;">
+              <div class="live-kpi-label">9. ĐỘ DỊCH CHUYỂN TÂM (+) KHI DÍNH NGOẠI LAI</div>
+              <div id="liveShift" class="live-kpi-val">0.00 σ</div>
+              <div class="live-kpi-sub">Khoảng cách tâm K-Means bị kéo lệch khỏi vị trí sạch ban đầu</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <div class="side-card-title">
+            <span>GIẢI THÍCH CƠ CHẾ HOẠT ĐỘNG</span>
+          </div>
+          <div id="mechanismFlow" class="mechanism-flow"></div>
+        </div>
+
+        <div class="side-card">
+          <div class="side-card-title">
+            <span>ĐIỂM CẦN NẮM Ở CHƯƠNG NÀY</span>
+          </div>
+          <ul id="bulletList" class="step-bullet-list"></ul>
+        </div>
+
+        <div class="side-card">
+          <div class="side-card-title">
+            <span>HỒ SƠ HẠT MẪU THẬT (MEDOID)</span>
+          </div>
+          <div id="medoidSpotlightCard" class="medoid-snapshot-box">
+            Hạt mẫu thật (Medoid) sẽ hiển thị chi tiết 16 số đo vật lý ở Chương 5, 6 &amp; 7.
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- BOTTOM CINEMA TRANSPORT BAR -->
+    <footer class="transport-dock">
+      <div class="transport-inner">
+        <div id="chapterStrip" class="chapter-strip" aria-label="7 chương từ 0 đến hoàn chỉnh"></div>
+
+        <div class="controls-row">
+          <div class="ctrl-buttons">
+            <button id="btnRestart" class="ctrl-btn" type="button" title="Chạy lại từ con số 0 (Phím R)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+              </svg>
+              <span>Từ số 0</span>
+            </button>
+            <button id="btnPrevAct" class="ctrl-btn" type="button" title="Chương trước (Mũi tên trái)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/>
+              </svg>
+            </button>
+            <button id="btnPlayPause" class="ctrl-btn primary" type="button" title="Phát / Tạm dừng (Phím Space)">
+              <span>Tạm dừng</span>
+            </button>
+            <button id="btnNextAct" class="ctrl-btn" type="button" title="Chương sau (Mũi tên phải)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="scrubber-wrap">
+            <input id="timelineRange" class="timeline-range" type="range" min="0" max="1000" value="0" aria-label="Thanh tua dòng thời gian" />
+            <div id="timeReadout" class="time-readout">00:00 / 02:06</div>
+          </div>
+
+          <label style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; cursor:pointer; color:var(--ink);">
+            <input id="chkAutoPauseAct" type="checkbox" style="width:15px; height:15px; cursor:pointer;" />
+            <span>Dừng cuối mỗi chương</span>
+          </label>
+
+          <div class="speed-group" role="group" aria-label="Tốc độ phát">
+            <button class="speed-btn" data-speed="0.5" type="button" title="Rất chậm để đọc từng dòng">0.5×</button>
+            <button class="speed-btn" data-speed="0.75" type="button">0.75×</button>
+            <button class="speed-btn active" data-speed="1" type="button">1×</button>
+            <button class="speed-btn" data-speed="1.5" type="button">1.5×</button>
+            <button class="speed-btn" data-speed="2" type="button">2×</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Scripts nạp theo thứ tự: hằng số -> dữ liệu thật -> engine -> story -> renderer -> player -->
+  <script src="../dry_bean_web/js/constants.js"></script>
+  <script src="../dry_bean_web/js/da14_web_data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/story.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/player.js"></script>
+</body>
+</html>

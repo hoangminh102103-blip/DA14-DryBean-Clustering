@@ -85,14 +85,14 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 7px 13px;
   border-radius: var(--radius-sm);
   border: 1.5px solid transparent;
   background: transparent;
   color: var(--ink-muted);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.12s ease;
 }
@@ -140,12 +140,12 @@
    3. WORKBENCH 3 CỘT
    ========================================================================= */
 .workbench {
-  max-width: 1640px;
+  max-width: 1680px;
   margin: 0 auto;
-  padding: 14px 16px 24px;
+  padding: 16px 18px 28px;
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr) 332px;
-  gap: 14px;
+  grid-template-columns: 268px minmax(0, 1fr) 365px;
+  gap: 16px;
   align-items: start;
 }
 

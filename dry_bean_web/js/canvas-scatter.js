@@ -9,12 +9,12 @@ const ctxKMeans = canvasKMeans.getContext('2d', { alpha: false });
 const ctxKMedoids = canvasKMedoids.getContext('2d', { alpha: false });
 
 function dataToScreen(pc1, pc2, width, height) {
-  const padL = 42, padR = 16, padT = 18, padB = 30;
+  const padL = 44, padR = 16, padT = 18, padB = 36;
   const plotW = width - padL - padR;
   const plotH = height - padT - padB;
 
-  const normX = (pc1 - (-5.5)) / 17.0;
-  const normY = 1 - (pc2 - (-5.2)) / 10.4;
+  const normX = (pc1 - (-7.0)) / 21.0;
+  const normY = 1 - (pc2 - (-6.5)) / 16.5;
 
   const baseX = padL + normX * plotW;
   const baseY = padT + normY * plotH;
@@ -28,7 +28,7 @@ function dataToScreen(pc1, pc2, width, height) {
 }
 
 function drawDraftingGrid(ctx, w, h) {
-  const padL = 42, padR = 16, padT = 18, padB = 30;
+  const padL = 44, padR = 16, padT = 18, padB = 36;
 
   ctx.fillStyle = '#F9F7F2';
   ctx.fillRect(0, 0, w, h);
@@ -36,11 +36,11 @@ function drawDraftingGrid(ctx, w, h) {
   ctx.strokeStyle = '#E6E2D8';
   ctx.lineWidth = 1;
 
-  const xTicks = [-4, -2, 0, 2, 4, 6, 8, 10, 15, 20, 25, 30];
-  const yTicks = [-4, -2, 0, 2, 4];
+  const xTicks = [-6, -4, -2, 0, 2, 4, 6, 8, 10, 12, 15, 20, 25, 30];
+  const yTicks = [-6, -4, -2, 0, 2, 4, 6, 8];
 
-  ctx.font = '10px "JetBrains Mono", monospace';
-  ctx.fillStyle = '#888880';
+  ctx.font = '10.5px Consolas, monospace';
+  ctx.fillStyle = '#464842';
 
   xTicks.forEach(tx => {
     const p = dataToScreen(tx, 0, w, h);
@@ -87,16 +87,16 @@ function drawDraftingGrid(ctx, w, h) {
   ctx.lineWidth = 1.2;
   ctx.strokeRect(padL, padT, w - padL - padR, h - padT - padB);
 
-  ctx.fillStyle = '#575852';
-  ctx.font = '600 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#464842';
+  ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
   ctx.textAlign = 'right';
-  ctx.fillText(state.standardized ? 'PC1 (Kích thước →)' : 'Area thô (px² →)', w - padR, h - 5);
+  ctx.fillText(state.standardized ? 'PC1 · Kích thước hạt (→ to hơn)' : 'Area chưa chuẩn hóa (px² →)', w - padR, h - 5);
 
   ctx.save();
-  ctx.translate(12, padT + 4);
+  ctx.translate(14, padT + 4);
   ctx.rotate(-Math.PI / 2);
   ctx.textAlign = 'right';
-  ctx.fillText(state.standardized ? 'PC2 (Hình dáng ↑)' : 'Hình dáng (nén)', 0, 0);
+  ctx.fillText(state.standardized ? 'PC2 · Hình dáng (↑ thuôn hơn)' : 'Hình dáng (bị ép)', 0, 0);
   ctx.restore();
 }
 
@@ -174,8 +174,8 @@ function drawScatterCanvas(canvas, ctx, mode) {
     }
 
     if (offscreen > 0) {
-      const bw = 156, bh = 24;
-      const bx = w - bw - 10, by = 26;
+      const bw = 205, bh = 25;
+      const bx = w - bw - 10, by = 24;
       ctx.fillStyle = '#F8C8B8';
       ctx.strokeStyle = '#1E201E';
       ctx.lineWidth = 1.5;
@@ -185,9 +185,9 @@ function drawScatterCanvas(canvas, ctx, mode) {
       ctx.stroke();
 
       ctx.fillStyle = '#1E201E';
-      ctx.font = '700 10px "JetBrains Mono", monospace';
+      ctx.font = '700 11px "Segoe UI", system-ui, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(`⚡ ${offscreen} ngoại lai → (PC1 +25)`, bx + bw / 2, by + 15);
+      ctx.fillText(`⚡ ${offscreen} ngoại lai lệch phải →`, bx + bw / 2, by + 16);
     }
   }
 

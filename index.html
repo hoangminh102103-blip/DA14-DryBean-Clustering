@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DA14 · Dry Bean Lab — Tâm hay Medoid: hai cách chọn đại diện cụm</title>
+
+  <!-- CSS tách theo từng nhóm chức năng (chạy 100% offline không cần font CDN) -->
+  <link rel="stylesheet" href="dry_bean_web/css/tokens.css" />
+  <link rel="stylesheet" href="dry_bean_web/css/layout.css" />
+  <link rel="stylesheet" href="dry_bean_web/css/components.css" />
+</head>
+<body>
+
+  <!-- ======================================================================= -->
+  <!-- TOP NAVBAR                                                              -->
+  <!-- ======================================================================= -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-group">
+        <button id="btnMobileSidebar" class="mobile-menu-btn" type="button" aria-label="Mở danh mục 6 màn hình">☰</button>
+        <div class="brand-logo" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E201E" stroke-width="2.2">
+            <rect x="3" y="3" width="7" height="7" rx="1.5" fill="#FAF9F5"/>
+            <rect x="14" y="3" width="7" height="7" rx="1.5" fill="#FDF3C7"/>
+            <circle cx="17.5" cy="17.5" r="3.5" fill="#EAE4FA"/>
+            <path d="M10 6.5h4M6.5 10v7.5H14" />
+          </svg>
+        </div>
+        <div class="brand-title">
+          <span class="tag-box">DA14</span>
+          <span>Phòng thí nghiệm Đậu Khô</span>
+        </div>
+      </div>
+
+      <!-- 4 Tab chuyển nhanh trên thanh Top Navbar -->
+      <nav class="top-nav-tabs" aria-label="Điều hướng nhanh">
+        <button class="top-tab active" data-quick-tab="lab" onclick="handleTopTab('lab')">
+          <span>◈</span> So sánh trực quan (Màn 6)
+        </button>
+        <button class="top-tab" data-quick-tab="screens" onclick="handleTopTab('screens')">
+          <span>▤</span> Quy trình 6 màn hình
+        </button>
+        <button class="top-tab" data-quick-tab="benchmark" onclick="handleTopTab('benchmark')">
+          <span>⊞</span> Bảng 10 seed &amp; Kiểm định
+        </button>
+        <button class="top-tab" data-quick-tab="readme" onclick="handleTopTab('readme')">
+          <span>⌘</span> Tổng quan &amp; Thuật ngữ
+        </button>
+      </nav>
+
+      <!-- Phải: Thông tin dữ liệu & Mã lớp/SV -->
+      <div class="topbar-right">
+        <a class="adapter-trigger-btn" href="animation.html" style="background: var(--mint); text-decoration: none;" title="Mở trình diễn Animation chạy từ con số 0 đến hoàn chỉnh bài">
+          <span>▶</span> Animation Từ 0
+        </a>
+        <span class="meta-pill">13.611 hạt · 16 số đo</span>
+        <span class="meta-pill student">Nhóm 03 · 15DHTH07 · 2001231049</span>
+        <button id="btnOpenAdapter" class="adapter-trigger-btn" type="button" title="Nạp tệp JSON khác từ thư mục results/">
+          <span>⚡</span> Nạp JSON khác
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================= -->
+  <!-- BỐ CỤC WORKBENCH 3 CỘT                                                  -->
+  <!-- ======================================================================= -->
+  <div class="workbench">
+
+    <!-- ===================================================================== -->
+    <!-- CỘT TRÁI: CÂY 6 MÀN HÌNH THEO ĐẶC TẢ 07b                              -->
+    <!-- ===================================================================== -->
+    <aside id="leftSidebar" class="panel-box sidebar-left" aria-label="Cấu trúc 6 màn hình đồ án">
+      <div>
+        <div class="sidebar-header">
+          <span class="sidebar-title">▣ MỤC LỤC 6 MÀN HÌNH</span>
+          <span class="sidebar-count">6 phần</span>
+        </div>
+
+        <div class="screen-tree" id="screenTreeList">
+          <button class="screen-nav-item" data-screen="1" onclick="switchScreen(1)">
+            <span class="screen-icon-box" style="background: #D6ECFA;">01</span>
+            <span>Tổng quan &amp; Từ điển thuật ngữ</span>
+          </button>
+          <button class="screen-nav-item" data-screen="2" onclick="switchScreen(2)">
+            <span class="screen-icon-box" style="background: #FDF3C7;">02</span>
+            <span>Khám phá 16 số đo (EDA)</span>
+          </button>
+          <button class="screen-nav-item" data-screen="3" onclick="switchScreen(3)">
+            <span class="screen-icon-box" style="background: #EAE4FA;">03</span>
+            <span>Nén chiều PCA (16D → 2D)</span>
+          </button>
+          <button class="screen-nav-item" data-screen="4" onclick="switchScreen(4)">
+            <span class="screen-icon-box" style="background: #F8C8B8;">04</span>
+            <span>Cơ chế Tâm ảo (+) vs Hạt thật (◉)</span>
+          </button>
+          <button class="screen-nav-item" data-screen="5" onclick="switchScreen(5)">
+            <span class="screen-icon-box" style="background: #E2E8F0;">05</span>
+            <span>Bảng 10 seed, Wilcoxon &amp; Mở rộng</span>
+          </button>
+          <button class="screen-nav-item active" data-screen="6" onclick="switchScreen(6)">
+            <span class="screen-icon-box" style="background: #FAF9F5;">06</span>
+            <span>Tâm hay Medoid (Trực quan)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="progress-row">
+          <span>TIẾN ĐỘ XEM</span>
+          <span id="sidebarProgressText" class="tabular">6 / 6</span>
+        </div>
+        <div class="progress-track">
+          <div id="sidebarProgressFill" class="progress-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- CỘT GIỮA: SÂN KHẤU CHÍNH (MAIN STAGE)                                 -->
+    <!-- ===================================================================== -->
+    <main class="panel-box main-stage">
+
+      <!-- =================================================================== -->
+      <!-- VIEW 06: MÀN HÌNH ĐẶC THÙ — TÂM HAY MEDOID (MẶC ĐỊNH)              -->
+      <!-- =================================================================== -->
+      <section id="view-screen-6" class="screen-view active">
+        <div class="stage-header">
+          <div>
+            <div class="breadcrumb">06. Màn hình chính / So sánh hai cách chọn đại diện cụm trên 13.611 hạt đậu thật</div>
+            <h1 class="stage-title">Tâm hay Medoid: hai cách chọn hạt đại diện cho một cụm</h1>
+            <p class="stage-subtitle">
+              So sánh song song cùng 13.611 hạt đậu: bên trái <strong>K-Means</strong> chọn tọa độ trung bình ảo (dấu <strong>+</strong>, dễ bị nhiễu kéo lệch), bên phải <strong>K-Medoids (PAM)</strong> chọn đúng 1 hạt đậu có thật (điểm <strong>◉</strong>, giữ vững vị trí khi có hạt bất thường).
+            </p>
+          </div>
+          <div class="header-badges">
+            <span class="pastel-badge bg-yellow">● 13.611 hạt thật</span>
+            <span class="pastel-badge bg-blue">◫ PCA 2D–16D</span>
+            <span class="pastel-badge bg-lavender">⊕ Đồng bộ Zoom</span>
+          </div>
+        </div>
+
+        <!-- Hàng 5 thẻ KPI + 2 nút thao tác nhanh -->
+        <div class="kpi-action-bar">
+          <div class="kpi-strip">
+            <div id="kpiCardKmeans" class="kpi-card">
+              <div class="kpi-label"><span>+</span> ĐỘ KHỚP ARI · K-MEANS</div>
+              <div class="kpi-value tabular">
+                <span id="kpiAriKm">0.674</span>
+                <span id="kpiDeltaKm" class="kpi-delta" style="display:none;"></span>
+              </div>
+              <div class="kpi-hint">Khớp 7 giống thật (0 → 1)</div>
+            </div>
+            <div id="kpiCardKmedoids" class="kpi-card">
+              <div class="kpi-label"><span>◉</span> ĐỘ KHỚP ARI · K-MEDOIDS</div>
+              <div class="kpi-value tabular">
+                <span id="kpiAriMed">0.669</span>
+                <span id="kpiDeltaMed" class="kpi-delta" style="display:none;"></span>
+              </div>
+              <div class="kpi-hint">Khớp 7 giống thật (0 → 1)</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label"><span>◈</span> HỆ SỐ BÓNG (SILHOUETTE)</div>
+              <div class="kpi-value tabular">
+                <span id="kpiSilhouette">0.431</span>
+              </div>
+              <div class="kpi-hint">Độ tách gọn hình học (-1 → 1)</div>
+            </div>
+            <div id="kpiCardShift" class="kpi-card">
+              <div class="kpi-label"><span>⇄</span> ĐỘ LỆCH TÂM (+)</div>
+              <div class="kpi-value tabular">
+                <span id="kpiCentroidShift">0.00 σ</span>
+              </div>
+              <div class="kpi-hint">Tâm bị kéo xa khi có ngoại lai</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label"><span>⚙</span> CẤU HÌNH ĐANG CHẠY</div>
+              <div class="kpi-value tabular" style="font-size: 13px;">
+                <span id="kpiConfigText">k=7 · PCA 2D · Z-score</span>
+              </div>
+              <div class="kpi-hint">Số cụm · Số chiều · Thang đo</div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button id="btnQuickOutlier" class="tactile-btn coral" type="button">
+              ⚡ Tiêm ngoại lai 1%
+            </button>
+            <button id="btnQuickReset" class="tactile-btn" type="button" title="Đặt lại toàn bộ tham số &amp; góc nhìn về mặc định">
+              ↻ Đặt lại mặc định
+            </button>
+          </div>
+        </div>
+
+        <!-- Hai bản đồ phân tán HTML5 Canvas chia đôi theo chiều dọc -->
+        <div class="split-canvas-grid">
+          <!-- BẢN ĐỒ TRÁI: K-MEANS -->
+          <div class="canvas-card">
+            <div class="canvas-card-head">
+              <div class="canvas-card-title">
+                <span class="symbol-chip" style="background: var(--blue-pastel);">+</span>
+                <span>K-Means (Tâm trung bình ảo — không có hạt thật)</span>
+              </div>
+              <span class="canvas-card-sub">Cuộn chuột: Phóng to · Kéo: Di chuyển</span>
+            </div>
+            <div class="canvas-viewport">
+              <canvas id="canvasKMeans"></canvas>
+            </div>
+            <div class="canvas-card-foot">
+              <span>Đại diện: <strong>Điểm trung bình cộng toán học (+)</strong></span>
+              <span id="footKmStatus" style="color: var(--kmeans-color); font-weight: 700;">Độ khớp ARI = 0.674</span>
+            </div>
+          </div>
+
+          <!-- BẢN ĐỒ PHẢI: K-MEDOIDS -->
+          <div class="canvas-card">
+            <div class="canvas-card-head">
+              <div class="canvas-card-title">
+                <span class="symbol-chip" style="background: var(--mint);">◉</span>
+                <span>K-Medoids PAM (Hạt mẫu thật đại diện cụm)</span>
+              </div>
+              <span class="canvas-card-sub" style="color: var(--kmedoids-color); font-weight: 700;">Bấm vào điểm ◉ để xem 16 số đo hạt</span>
+            </div>
+            <div class="canvas-viewport">
+              <canvas id="canvasKMedoids"></canvas>
+            </div>
+            <div class="canvas-card-foot">
+              <span>Đang chọn: <strong id="footSelectedMedoid">M1 (#Bean_00142)</strong></span>
+              <span id="footMedStatus" style="color: var(--kmedoids-color); font-weight: 700;">Độ khớp ARI = 0.669</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thanh chú giải 7 giống đậu (tổng đúng 13.611 hạt) -->
+        <div class="variety-legend-bar">
+          <div class="variety-pills" id="varietyLegendPills">
+            <!-- Tạo bằng JS -->
+          </div>
+          <div style="font-size: 12px; color: var(--ink-muted);">
+            Mức phóng đại: <strong id="zoomBadge" class="tabular">1.0×</strong>
+          </div>
+        </div>
+
+        <!-- Đồ thị 3 đường theo k (ARI K-Medoids, ARI K-Means, Hệ số bóng) -->
+        <div class="curve-box">
+          <div class="curve-header">
+            <div>
+              <strong style="font-size: 13px;">Biến thiên Độ khớp ARI &amp; Hệ số bóng khi thay đổi số cụm k (từ 2 đến 10)</strong>
+              <span style="font-size: 12px; color: var(--ink-muted); display: block;">Di chuột để xem từng giá trị hoặc bấm trực tiếp vào một mốc k trên đồ thị</span>
+            </div>
+            <div class="curve-legend">
+              <span><strong style="color: #0F766E;">●—</strong> ARI K-Medoids</span>
+              <span><strong style="color: #2563EB;">■—</strong> ARI K-Means</span>
+              <span><strong style="color: #D97706;">◆--</strong> Hệ số bóng (Silhouette)</span>
+            </div>
+          </div>
+          <div class="curve-canvas-wrap">
+            <canvas id="canvasMetricsCurve"></canvas>
+            <div id="curveTooltip" class="chart-tooltip"></div>
+          </div>
+        </div>
+
+        <!-- Thanh Timeline 6 bước thí nghiệm hướng dẫn ở đáy cột giữa -->
+        <div class="lesson-timeline-box">
+          <div class="timeline-head">
+            <span>LỘ TRÌNH 6 BƯỚC THÍ NGHIỆM HƯỚNG DẪN</span>
+            <span id="timelineStepCounter">Bước 1 / 6</span>
+          </div>
+          <div class="timeline-steps" id="timelineStepsContainer">
+            <!-- Điền 6 bước bằng JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 01: TỔNG QUAN, TỪ ĐIỂN THUẬT NGỮ & 3 LỆNH TÁI TẠO README       -->
+      <!-- =================================================================== -->
+      <section id="view-screen-1" class="screen-view">
+        <div class="stage-header">
+          <div>
+            <div class="breadcrumb">01. Tổng quan đề tài / Đặt bài toán &amp; Giải thích thuật ngữ dễ hiểu</div>
+            <h1 class="stage-title">Phân cụm 13.611 hạt đậu khô: K-Means hay K-Medoids tốt hơn?</h1>
+            <p class="stage-subtitle">
+              Bài toán thực tế: không biết trước nhãn giống, làm sao máy tự gom 13.611 hạt đậu thành 7 nhóm dựa trên 16 số đo hình ảnh, giữ ổn định khi có hạt lỗi và trả về được một <strong>hạt mẫu thật</strong> cho người phân loại?
+            </p>
+          </div>
+          <div class="header-badges">
+            <span class="pastel-badge bg-mint">UCI Dry Bean</span>
+            <span class="pastel-badge bg-yellow">7 Giống đậu</span>
+          </div>
+        </div>
+
+        <div class="info-grid-4">
+          <div class="paper-subcard">
+            <div style="font-size:11.5px; font-weight:700; color:var(--ink-muted);">TỔNG SỐ HẠT ĐẬU</div>
+            <div style="font-family:var(--font-display); font-size:24px; font-weight:700; margin-top:4px;">13.611</div>
+            <div style="font-size:12px; color:var(--ink-muted); margin-top:2px;">Hạt chụp ảnh chuẩn hóa</div>
+          </div>
+          <div class="paper-subcard">
+            <div style="font-size:11.5px; font-weight:700; color:var(--ink-muted);">SỐ ĐO HÌNH HỌC</div>
+            <div style="font-family:var(--font-display); font-size:24px; font-weight:700; margin-top:4px;">16 biến</div>
+            <div style="font-size:12px; color:var(--ink-muted); margin-top:2px;">12 số đo gốc + 4 hệ số dáng</div>
+          </div>
+          <div class="paper-subcard">
+            <div style="font-size:11.5px; font-weight:700; color:var(--ink-muted);">SỐ GIỐNG THẬT</div>
+            <div style="font-family:var(--font-display); font-size:24px; font-weight:700; margin-top:4px;">7 giống</div>
+            <div style="font-size:12px; color:var(--ink-muted); margin-top:2px;">Lệch cỡ mẫu (522 → 3.546)</div>
+          </div>
+          <div class="paper-subcard" style="background: var(--coral);">
+            <div style="font-size:11.5px; font-weight:700;">THỬ THÁCH NGOẠI LAI</div>
+            <div style="font-family:var(--font-display); font-size:24px; font-weight:700; margin-top:4px;">1.0%</div>
+            <div style="font-size:12px; margin-top:2px;">136 hạt bị thổi phồng kích thước</div>
+          </div>
+        </div>
+
+        <!-- Từ điển thuật ngữ plain Vietnamese -->
+        <div class="paper-subcard">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
+            <strong style="font-size:14px;">Từ điển thuật ngữ dễ hiểu (Đọc nhanh trong 30 giây)</strong>
+            <span class="pastel-badge bg-yellow">Giải thích từ ngữ kỹ thuật</span>
+          </div>
+          <div class="glossary-grid">
+            <div class="glossary-card">
+              <div class="glossary-term">1. Tâm K-Means (+ điểm ảo)</div>
+              <div class="glossary-def">Là tọa độ trung bình cộng của cả cụm. Điểm này <strong>không phải một hạt đậu thật</strong> và dễ bị 1 vài hạt ngoại lai nằm xa kéo lệch ra ngoài.</div>
+            </div>
+            <div class="glossary-card">
+              <div class="glossary-term">2. Medoid trong K-Medoids / PAM (◉ hạt thật)</div>
+              <div class="glossary-def">Là <strong>một hạt đậu có thật</strong> nằm ở giữa cụm nhất (tổng khoảng cách tới các hạt khác nhỏ nhất), đọc được đủ 16 số đo thật và ít bị nhiễu kéo.</div>
+            </div>
+            <div class="glossary-card">
+              <div class="glossary-term">3. ARI — Độ khớp nhãn thật (0 → 1)</div>
+              <div class="glossary-def">Đo xem các cụm máy tự gom có trùng khớp với 7 giống đậu thật ngoài đời hay không. Càng gần <strong>1.0</strong> càng chuẩn (<strong>0.0</strong> là ngang đoán mò).</div>
+            </div>
+            <div class="glossary-card">
+              <div class="glossary-term">4. Hệ số bóng — Silhouette (-1 → 1)</div>
+              <div class="glossary-def">Không cần biết nhãn thật: đo độ gọn của từng cụm và mức tách xa khỏi cụm hàng xóm. Số cao tức các cụm tách rời rõ về hình học.</div>
+            </div>
+            <div class="glossary-card">
+              <div class="glossary-term">5. Chuẩn hóa Z-score &amp; PCA</div>
+              <div class="glossary-def"><strong>Z-score</strong> quy mọi số đo (từ diện tích ~254.000 đến hệ số ~0,004) về cùng đơn vị độ lệch chuẩn σ; <strong>PCA</strong> nén 16 cột trùng lặp thành vài trục chính độc lập.</div>
+            </div>
+            <div class="glossary-card">
+              <div class="glossary-term">6. Kiểm định Wilcoxon &amp; Mahalanobis</div>
+              <div class="glossary-def"><strong>Wilcoxon</strong> kiểm tra qua 10 lần chạy (10 seed) xem chênh lệch 2 thuật toán có ý nghĩa thật (<code>p &lt; 0.05</code>); <strong>Mahalanobis</strong> thử khử tương quan nhưng gặp suy biến khi nhiều chiều.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phân bố 7 lớp chuẩn xác -->
+        <div class="paper-subcard">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <strong style="font-size:13.5px;">Phân bố số lượng hạt của 7 giống đậu thật (Tổng = 13.611 hạt)</strong>
+            <span class="pastel-badge bg-blue">Nhãn đối chiếu thật</span>
+          </div>
+          <div id="screen1VarietyBars" style="display:flex; flex-direction:column; gap:7px;"></div>
+        </div>
+
+        <!-- 3 lệnh tái tạo chuẩn trong README.md -->
+        <div class="paper-subcard">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <strong style="font-size:13.5px;">Ba lệnh tái tạo toàn bộ kết quả thực nghiệm (Python → Web)</strong>
+              <div style="font-size:12px; color:var(--ink-muted);">Chạy trong thư mục đồ án để sinh lại toàn bộ bảng CSV (<code>results/bang/</code>), hình (<code>results/hinh/</code>) và dữ liệu web</div>
+            </div>
+            <button id="btnCopyReadmeCmds" class="tactile-btn mint" type="button" onclick="copyTextToClipboard('readmeCmdBlock', 'btnCopyReadmeCmds', '⎘ Sao chép 3 lệnh')">
+              ⎘ Sao chép 3 lệnh
+            </button>
+          </div>
+          <pre id="readmeCmdBlock" class="code-terminal">pip install -r requirements.txt
+python experiments/chay.py --tat-ca
+python app/export_json_web.py</pre>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 02: KHÁM PHÁ EDA 16 ĐẶC TRƯNG HÌNH HỌC                         -->
+      <!-- =================================================================== -->
+      <section id="view-screen-2" class="screen-view">
+        <div class="stage-header">
+          <div>
+            <div class="breadcrumb">02. Khám phá dữ liệu EDA / Chênh lệch thang đo &amp; Phân phối 16 số đo</div>
+            <h1 class="stage-title">Phân tích phân phối 16 thông số hình học trên 7 giống đậu</h1>
+            <p class="stage-subtitle">
+              Diện tích hạt (<code>Area</code>) có giá trị lên tới <strong>254.616 px²</strong> trong khi <code>ShapeFactor1</code> chỉ khoảng <strong>0,004 px⁻¹</strong>. Nếu không chuẩn hóa Z-score, 15 thông số hình dáng nhỏ bé sẽ bị bỏ qua hoàn toàn.
+            </p>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <select id="edaSelectFeature" class="tactile-btn" style="background: var(--bg-panel);"></select>
+            <button id="btnToggleEdaZscore" class="tactile-btn yellow" type="button">Thang đo: Giá trị đo gốc</button>
+          </div>
+        </div>
+
+        <div class="canvas-card">
+          <div class="canvas-card-head">
+            <strong id="edaBoxTitle">Biểu đồ hộp (trung vị &amp; 25%–75%) của Diện tích (Area) trên 7 giống đậu</strong>
+            <span id="edaBoxUnit" class="pastel-badge bg-yellow">Đơn vị đo: px²</span>
+          </div>
+          <div class="canvas-viewport" style="height: 315px;">
+            <canvas id="canvasEdaBoxplot"></canvas>
+          </div>
+        </div>
+
+        <div class="data-table-wrap">
+          <table class="paper-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tên tiếng Việt (Cột gốc &amp; đơn vị)</th>
+                <th>Nhóm đặc trưng</th>
+                <th>Ý nghĩa hình học (Bấm một dòng để vẽ biểu đồ)</th>
+                <th>Trung bình</th>
+                <th>Độ lệch chuẩn</th>
+              </tr>
+            </thead>
+            <tbody id="edaDictionaryTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 03: GIẢM CHIỀU PCA (PC1–PC16)                                  -->
+      <!-- =================================================================== -->
+      <section id="view-screen-3" class="screen-view">
+        <div class="stage-header">
+          <div>
+            <div class="breadcrumb">03. Giảm chiều PCA (PC1 → PC16) / Khử trùng lặp từ 21 cặp biến tương quan mạnh</div>
+            <h1 class="stage-title">Phương sai tích lũy &amp; Ý nghĩa vật lý của mặt phẳng 2 trục chính</h1>
+            <p class="stage-subtitle">
+              Vì có tới <strong>21/120 cặp</strong> đặc trưng tương quan rất mạnh (|r| &gt; 0,9), chỉ 2 trục đầu (<strong>PC1 + PC2</strong>) đã giữ được <strong>81,90%</strong> lượng thông tin, còn 4 trục đạt <strong>95,0%</strong> và 7 trục đạt <strong>99,6%</strong>.
+            </p>
+          </div>
+          <div class="header-badges">
+            <span class="pastel-badge bg-blue">PC1: 55,47%</span>
+            <span class="pastel-badge bg-mint">PC2: 26,43%</span>
+            <span class="pastel-badge bg-lavender">2 trục đầu: 81,90%</span>
+          </div>
+        </div>
+
+        <div class="canvas-card">
+          <div class="canvas-card-head">
+            <strong>Biểu đồ Scree &amp; Đường tích lũy lượng thông tin từ PC1 đến PC16</strong>
+            <span style="font-size:12px; color:var(--ink-muted);">Cột màu: Phần trăm từng trục · Đường xanh: Tích lũy (%)</span>
+          </div>
+          <div class="canvas-viewport" style="height: 305px;">
+            <canvas id="canvasPcaScree"></canvas>
+          </div>
+        </div>
+
+        <div class="summary-strip" style="background: var(--yellow);">
+          <strong>Các mốc số chiều PCA đo thực nghiệm trên tập dữ liệu:</strong>
+          Ngưỡng <strong>80%</strong> cần <strong>2 trục</strong> (81,9%) ·
+          Ngưỡng <strong>90%</strong> và <strong>95%</strong> cùng đạt tại <strong>4 trục</strong> (95,0%) ·
+          Ngưỡng <strong>99%</strong> cần <strong>7 trục</strong> (99,6%, nơi PAM đạt đỉnh khớp nhãn thật <strong>ARI = 0,695</strong>).
+        </div>
+
+        <div class="info-grid-2">
+          <div class="paper-subcard" style="background: var(--blue-pastel);">
+            <strong>TRỤC HOÀNH PC1 (55,47% thông tin) — Trục Kích thước hạt</strong>
+            <p style="font-size:12.5px; line-height:1.55; margin-top:6px;">
+              Tổng hợp các số đo kích cỡ: <code>Area (Diện tích)</code>, <code>ConvexArea</code>, <code>Perimeter (Chu vi)</code> và <code>MajorAxisLength</code>. Hạt càng to (như <strong>Bombay</strong>, <strong>Cali</strong>) càng nằm lệch sang bên phải.
+            </p>
+          </div>
+          <div class="paper-subcard" style="background: var(--mint);">
+            <strong>TRỤC TUNG PC2 (26,43% thông tin) — Trục Độ thuôn dài vs Tròn</strong>
+            <p style="font-size:12.5px; line-height:1.55; margin-top:6px;">
+              Tách biệt hạt thuôn dài phía trên (<code>AspectRation</code>, <code>Eccentricity</code> cao — như giống <strong>Horoz</strong>) với hạt tròn đầy phía dưới (<code>roundness</code>, <code>Compactness</code> cao — như giống <strong>Seker</strong>).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 04: CƠ CHẾ K-MEANS VS K-MEDOIDS (TỪNG BƯỚC TRỰC QUAN)          -->
+      <!-- =================================================================== -->
+      <section id="view-screen-4" class="screen-view">
+        <div class="stage-header">
+          <div>
+            <div class="breadcrumb">04. Cơ chế K-Means vs K-Medoids / Mô phỏng từng vòng lặp</div>
+            <h1 class="stage-title">Vì sao 1 hạt ngoại lai kéo lệch tâm K-Means (+) nhưng bó tay trước Medoid (◉)?</h1>
+            <p class="stage-subtitle">
+              Mô phỏng một cụm gồm 14 hạt bình thường (bên trái) và 1 hạt ngoại lai nằm xa bên phải. Bấm <strong>Bước lặp tiếp theo</strong> để xem tâm <strong>+</strong> bị kéo đi từng bước trong khi hạt mẫu <strong>◉</strong> không hề nhúc nhích.
+            </p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button id="btnMechToggleOutlier" class="tactile-btn coral active-outlier" type="button">⚡ Điểm ngoại lai: ĐANG BẬT</button>
+            <button id="btnMechNextIter" class="tactile-btn mint" type="button">Bước lặp tiếp theo →</button>
+          </div>
+        </div>
+
+        <div class="canvas-card">
+          <div class="canvas-card-head">
+            <strong id="mechIterTitle">Mô phỏng hội tụ: Tâm K-Means (+) trượt khỏi đám mây hạt thật, Medoid (◉) đứng yên</strong>
+            <span class="pastel-badge bg-yellow">14 hạt chuẩn + 1 hạt nhiễu</span>
+          </div>
+          <div class="canvas-viewport" style="height: 320px;">
+            <canvas id="canvasMechanismDemo"></canvas>
+          </div>
+        </div>
+
+        <div class="info-grid-2">
+          <div class="paper-subcard">
+            <strong>K-Means: Tính trung bình &amp; bình phương sai số (d²)</strong>
+            <p style="font-size:12.5px; line-height:1.55; color:var(--ink-muted); margin-top:6px;">
+              Vì khoảng cách bị <strong>bình phương (d²)</strong>, một hạt nằm xa gấp 10 lần tạo ra lực kéo mạnh gấp 100 lần. Tâm trung bình <code>μ</code> bị kéo trượt về vùng trống không có hạt thật nào.
+            </p>
+          </div>
+          <div class="paper-subcard">
+            <strong>K-Medoids (PAM): Chỉ hoán đổi trên các hạt thật &amp; cộng trực tiếp khoảng cách (d)</strong>
+            <p style="font-size:12.5px; line-height:1.55; color:var(--ink-muted); margin-top:6px;">
+              Đại diện bắt buộc phải là <strong>một hạt đậu thật</strong> trong cụm. Khi thử dời medoid sang hạt ngoại lai, tổng khoảng cách tới 14 hạt còn lại tăng vọt nên thuật toán lập tức giữ nguyên hạt mẫu cũ.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 05: BẢNG CHÍNH, KIỂM ĐỊNH WILCOXON & MỞ RỘNG MAHALANOBIS       -->
+      <!-- =================================================================== -->
+      <section id="view-screen-5" class="screen-view">
+        <div class="stage-header">
+          <div>
+            <div class="breadcrumb">05. Bảng tổng hợp 10 seed / So sánh dữ liệu sạch, tiêm nhiễu 1%, Wilcoxon &amp; Mở rộng A</div>
+            <h1 class="stage-title">Bảng kết quả 10 lần chạy (10 seeds) &amp; Kiểm chứng thống kê</h1>
+            <p class="stage-subtitle">
+              Số liệu chạy thật trên Python (mỗi seed lấy mẫu ngẫu nhiên n = 3.000 hạt, k = 2..10, Mean ± SD qua 10 seeds). Chọn không gian <code>d = 2</code>, <code>d = 4</code> hoặc <code>Gốc d = 16</code> để đối chiếu.
+            </p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="tactile-btn mint exp-dim-btn" data-dim="2" onclick="selectExpDim(2)">PCA d=2</button>
+            <button class="tactile-btn exp-dim-btn" data-dim="4" onclick="selectExpDim(4)">PCA d=4</button>
+            <button class="tactile-btn exp-dim-btn" data-dim="16" onclick="selectExpDim(16)">Gốc d=16</button>
+            <button id="btnCopyBenchmarkMd" class="tactile-btn yellow" type="button" onclick="copyBenchmarkMarkdown()">⎘ Chép bảng Markdown</button>
+          </div>
+        </div>
+
+        <div class="data-table-wrap">
+          <table class="paper-table tabular">
+            <thead>
+              <tr>
+                <th rowspan="2" style="text-align:center;">Số cụm k</th>
+                <th colspan="4" style="background: var(--blue-pastel); text-align:center;">DỮ LIỆU SẠCH (Mean ± SD, 10 seeds)</th>
+                <th colspan="4" style="background: var(--coral); text-align:center;">SAU TIÊM NGOẠI LAI 1% (Mean ± SD)</th>
+                <th colspan="2" style="background: var(--yellow); text-align:center;">MỨC BIẾN ĐỘNG Δ ARI</th>
+              </tr>
+              <tr>
+                <th>ARI K-Medoids</th>
+                <th>ARI K-Means</th>
+                <th>Hệ số bóng</th>
+                <th>Thời gian (s)</th>
+                <th>ARI K-Medoids</th>
+                <th>ARI K-Means</th>
+                <th>Hệ số bóng</th>
+                <th>Thời gian (s)</th>
+                <th>Δ K-Medoids</th>
+                <th>Δ K-Means</th>
+              </tr>
+            </thead>
+            <tbody id="benchmarkTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="info-grid-2">
+          <div class="paper-subcard">
+            <strong>Kiểm định cặp Wilcoxon (k = 7, 10 seeds, ngưỡng p &lt; 0,05)</strong>
+            <ul style="font-size:12.5px; line-height:1.65; color:var(--ink-muted); margin-top:6px; padding-left:18px;">
+              <li><strong>Không gian gốc 16D (Dữ liệu sạch):</strong> PAM đạt <code>0,695 ± 0,015</code> cao hơn K-Means <code>0,665 ± 0,007</code> có ý nghĩa thống kê (<code>p = 0,00195</code>).</li>
+              <li><strong>Không gian gốc 16D (Dính 1% ngoại lai):</strong> PAM giữ <code>0,689 ± 0,016</code> (chỉ tụt <code>-0,006</code>), trong khi K-Means tụt xuống <code>0,598 ± 0,064</code> (<code>Δ = -0,067</code>, <code>p = 0,00195</code>).</li>
+              <li><strong>PCA d = 4 (Dữ liệu sạch):</strong> K-Means đạt <code>0,659</code> nhỉnh hơn PAM <code>0,626</code> (<code>p = 0,00586</code>) — cho thấy Trade-off giữa nén chiều và giữ đủ 16 biến gốc.</li>
+            </ul>
+          </div>
+
+          <div class="paper-subcard">
+            <strong>Đối chiếu Mốc cơ sở &amp; Mở rộng A (Khoảng cách Mahalanobis SVD)</strong>
+            <ul style="font-size:12.5px; line-height:1.65; color:var(--ink-muted); margin-top:6px; padding-left:18px;">
+              <li><strong>Mốc dưới (Đoán lớp đông nhất DERMASON):</strong> Accuracy <code>26,04%</code>, <code>ARI = 0,000</code> · <strong>K-Means chưa chuẩn hóa:</strong> chỉ đạt <code>ARI = 0,379 ± 0,011</code>.</li>
+              <li><strong>Mốc trên (Random Forest có giám sát):</strong> Đạt <code>92,03%</code> trên 16D (<code>ARI = 0,810</code>) và <code>92,88%</code> trên PCA d=7 (<code>ARI = 0,828</code>).</li>
+              <li><strong>Mở rộng A — Mahalanobis SVD (k=7, 10 seeds):</strong> SVD <code>pinv</code> chỉ đạt <code>ARI = 0,489 ± 0,047</code>; điều chuẩn <strong>Tikhonov</strong> nâng lên <code>0,555 ± 0,057</code> nhưng vẫn thua Euclid 16D (<code>0,695</code>) vì 21 cặp tương quan &gt; 0,9 làm <code>cond(Cov_d) = 30.738 &gt; 10⁴</code> từ d = 12 (tới <code>5,08 × 10⁶</code> tại d = 16).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- CỘT PHẢI: BẢNG ĐIỀU KHIỂN & GIẢI THÍCH NGỮ CẢNH                       -->
+    <!-- ===================================================================== -->
+    <aside class="sidebar-right" aria-label="Bảng điều khiển thí nghiệm và hồ sơ medoid">
+
+      <!-- Thẻ 1: Hướng dẫn từng bước thí nghiệm + Ý CHÍNH CẦN NHỚ -->
+      <div class="right-card">
+        <div class="step-meta-row">
+          <span id="rightStepLabel" class="step-counter">THÍ NGHIỆM 1 / 6</span>
+          <span id="rightStepBadge" class="pastel-badge bg-mint">CƠ BẢN</span>
+        </div>
+
+        <h2 id="rightStepTitle" class="right-title">Trạng thái chuẩn: 7 cụm trên mặt phẳng 2 trục chính (PC1–PC2)</h2>
+        <p id="rightStepDesc" class="right-desc">
+          Toàn bộ 13.611 hạt đậu được chiếu xuống 2 trục chính (giữ 81.9% lượng thông tin). Dấu chữ thập (+) của K-Means là tâm tính toán ảo nằm giữa khoảng trống, còn chấm sáng (◉) của K-Medoids là một hạt đậu có thật.
+        </p>
+
+        <div class="key-idea-box">
+          <div class="key-idea-head">
+            <span>✦ Ý CHÍNH CẦN NHỚ</span>
+          </div>
+          <p id="rightKeyIdea" class="key-idea-text">
+            Tâm K-Means là trung bình cộng toán học nên có thể rơi vào khoảng trống không có hạt nào; Medoid luôn là một hạt đậu thật được chọn làm mẫu đại diện.
+          </p>
+        </div>
+
+        <!-- Nút điều hướng Trước / Tiếp theo -->
+        <div class="nav-step-buttons" style="margin-top: 12px;">
+          <button id="btnPrevStep" class="tactile-btn" type="button">← Bước trước</button>
+          <button id="btnNextStep" class="tactile-btn mint" type="button">Bước tiếp theo →</button>
+        </div>
+      </div>
+
+      <!-- Thẻ 2: Bảng điều khiển tham số tương tác trực tiếp -->
+      <div class="right-card">
+        <div class="control-section-title">
+          <span>⚙ ĐIỀU CHỈNH THAM SỐ TRỰC TIẾP</span>
+          <span style="font-size:11px; color:var(--ink-muted);">Cập nhật ngay</span>
+        </div>
+
+        <!-- Thanh trượt k -->
+        <div class="control-group">
+          <div class="control-label-row">
+            <label for="sliderK">Số lượng cụm muốn chia (k)</label>
+            <span id="badgeK" class="val-chip tabular">k = 7</span>
+          </div>
+          <input id="sliderK" class="paper-slider" type="range" min="2" max="10" step="1" value="7" />
+        </div>
+
+        <!-- Thanh trượt số chiều PCA -->
+        <div class="control-group">
+          <div class="control-label-row">
+            <label for="sliderPCA">Số trục chính PCA sử dụng (d)</label>
+            <span id="badgePCA" class="val-chip tabular">d = 2 (81.9% thông tin)</span>
+          </div>
+          <input id="sliderPCA" class="paper-slider" type="range" min="2" max="16" step="1" value="2" />
+        </div>
+
+        <!-- Công tắc Bật/Tắt Chuẩn hóa StandardScaler -->
+        <div id="toggleStandardizeBox" class="toggle-switch-row" role="button" tabindex="0">
+          <div>
+            <div style="font-size:12.5px; font-weight:700;">Chuẩn hóa thang đo Z-score</div>
+            <div id="stdSubLabel" style="font-size:11px; color:var(--ink-muted);">Đưa 16 thông số về cùng thang Z-score</div>
+          </div>
+          <span id="stdPillBadge" class="switch-pill bg-mint">ĐANG BẬT</span>
+        </div>
+
+        <!-- Nút điểm nhấn: Tiêm ngoại lai 1% -->
+        <button id="btnSidebarOutlier" class="tactile-btn coral full-width-btn" type="button">
+          ⚡ Tiêm ngoại lai vào 1% hạt (136 hạt)
+        </button>
+      </div>
+
+      <!-- Thẻ 3: Hồ sơ 16 đặc trưng hình học của Medoid đang được bấm chọn -->
+      <div class="right-card">
+        <div class="control-section-title">
+          <span>◉ SOI 16 SỐ ĐO CỦA MEDOID ĐANG CHỌN</span>
+          <span id="medoidActiveTag" class="pastel-badge bg-mint" style="padding:1px 7px;">M1</span>
+        </div>
+
+        <div id="medoidQuickPills" class="medoid-pills-row"></div>
+
+        <div id="medoidMetaBanner" class="medoid-meta-banner">
+          Hạt mẫu thật: <strong>#Bean_00142</strong> · Giống: <strong>Dermason</strong>
+        </div>
+
+        <div id="medoidFeaturesGrid" class="features-16-grid tabular">
+          <!-- 16 ô thông số hình học -->
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL DATA ADAPTER (TÍCH HỢP KẾT QUẢ THẬT TỪ results/)                  -->
+  <!-- ======================================================================= -->
+  <div id="adapterModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <span>⚡ Nạp bộ dữ liệu JSON từ Python (results/)</span>
+        <button id="btnCloseAdapter" class="tactile-btn" style="padding:3px 8px;" type="button">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Trang web đã được nhúng sẵn <strong>13.611 hạt đậu thật</strong>, mô hình PCA thật và bảng 10-seed từ Python (chạy offline ngay khi mở file <code>index.html</code>).
+        </p>
+        <p>
+          Nếu bạn vừa chạy lại 3 lệnh thí nghiệm và muốn thử nạp một tệp <code>.json</code> mới xuất từ <code>results/</code>, hãy chọn tệp bên dưới:
+        </p>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input id="jsonFileInput" type="file" accept=".json" class="tactile-btn" style="font-size:12px;" />
+          <span id="adapterLoadStatus" style="font-size:12px; color:var(--kmedoids-color); font-weight:700;"></span>
+        </div>
+        <pre class="code-terminal">{
+  "beans": [
+    {
+      "id": 0,
+      "variety": "SEKER",
+      "pc": [-2.14, -1.42, 0.31, ...], // 16 tọa độ sau PCA
+      "features": { "Area": 28395, "Perimeter": 610.291, ... } // đủ 16 cột
+    }
+  ],
+  "benchmarkTable": {
+    "2": [ { "k": 2, "cMed": "0.281±0.001", "cKm": "0.279±0.001", ... } ]
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- JAVASCRIPT TÁCH THEO TỪNG CHỨC NĂNG (NẠP ĐÚNG THỨ TỰ PHỤ THUỘC)        -->
+  <!-- ======================================================================= -->
+  <script src="dry_bean_web/js/constants.js"></script>
+  <script src="dry_bean_web/js/state.js"></script>
+  <script src="dry_bean_web/js/data.js"></script>
+  <script src="dry_bean_web/js/algorithms.js"></script>
+  <script src="dry_bean_web/js/canvas-scatter.js"></script>
+  <script src="dry_bean_web/js/canvas-charts.js"></script>
+  <script src="dry_bean_web/js/ui.js"></script>
+  <script src="dry_bean_web/js/da14_web_data.js"></script>
+  <script src="dry_bean_web/js/main.js"></script>
+</body>
+</html>

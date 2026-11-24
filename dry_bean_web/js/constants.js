@@ -21,22 +21,22 @@ const CLUSTER_COLORS = [
 ];
 
 const FEATURE_META = [
-  { key: 'Area',            group: 'Kích thước', unit: 'px²',   desc: 'Diện tích vùng hạt đậu tính bằng số điểm ảnh.' },
-  { key: 'Perimeter',       group: 'Kích thước', unit: 'px',    desc: 'Chu vi đường biên bao quanh hạt đậu.' },
-  { key: 'MajorAxisLength', group: 'Kích thước', unit: 'px',    desc: 'Chiều dài trục chính của elip ngoại tiếp hạt.' },
-  { key: 'MinorAxisLength', group: 'Kích thước', unit: 'px',    desc: 'Chiều dài trục phụ vuông góc trục chính.' },
-  { key: 'AspectRation',    group: 'Hình dáng',  unit: 'tỷ lệ', desc: 'Tỷ số trục chính / trục phụ (L / W).' },
-  { key: 'Eccentricity',    group: 'Hình dáng',  unit: '0–1',   desc: 'Độ lệch tâm của elip tương đương.' },
-  { key: 'ConvexArea',      group: 'Kích thước', unit: 'px²',   desc: 'Diện tích đa giác lồi nhỏ nhất bao trọn hạt.' },
-  { key: 'EquivDiameter',   group: 'Kích thước', unit: 'px',    desc: 'Đường kính hình tròn có cùng diện tích.' },
-  { key: 'Extent',          group: 'Hình dáng',  unit: 'tỷ lệ', desc: 'Tỷ số diện tích hạt trên khung chữ nhật bao.' },
-  { key: 'Solidity',        group: 'Hình dáng',  unit: 'tỷ lệ', desc: 'Độ đặc của hạt: Area / ConvexArea.' },
-  { key: 'roundness',       group: 'Hình dáng',  unit: '0–1',   desc: 'Độ tròn chuẩn hóa: 4π·Area / Perimeter².' },
-  { key: 'Compactness',     group: 'Hình dáng',  unit: 'tỷ lệ', desc: 'Độ gọn: EquivDiameter / MajorAxisLength.' },
-  { key: 'ShapeFactor1',    group: 'Hệ số SF',   unit: 'px⁻¹',  desc: 'Hệ số hình dạng 1: MajorAxisLength / Area.' },
-  { key: 'ShapeFactor2',    group: 'Hệ số SF',   unit: 'px⁻¹',  desc: 'Hệ số hình dạng 2: MinorAxisLength / Area.' },
-  { key: 'ShapeFactor3',    group: 'Hệ số SF',   unit: 'tỷ lệ', desc: 'Hệ số hình dạng 3: Area / ((Major/2)² · π).' },
-  { key: 'ShapeFactor4',    group: 'Hệ số SF',   unit: 'tỷ lệ', desc: 'Hệ số hình dạng 4: Area / ((Major/2)(Minor/2)π).' }
+  { key: 'Area',            viName: 'Diện tích',             group: 'Kích thước', unit: 'px²',   desc: 'Diện tích vùng hạt đậu tính bằng số điểm ảnh (pixel²).' },
+  { key: 'Perimeter',       viName: 'Chu vi',                group: 'Kích thước', unit: 'px',    desc: 'Chu vi đường biên bao quanh hạt đậu (pixel).' },
+  { key: 'MajorAxisLength', viName: 'Trục chính (dài)',      group: 'Kích thước', unit: 'px',    desc: 'Chiều dài trục lớn nhất của hình elip bao hạt.' },
+  { key: 'MinorAxisLength', viName: 'Trục phụ (rộng)',       group: 'Kích thước', unit: 'px',    desc: 'Chiều rộng trục nhỏ vuông góc với trục chính.' },
+  { key: 'AspectRation',    viName: 'Tỉ lệ dài / rộng',      group: 'Hình dáng',  unit: 'tỉ lệ', desc: 'Tỉ số giữa chiều dài trục chính và trục phụ (hạt dài hay ngắn).' },
+  { key: 'Eccentricity',    viName: 'Độ lệch tâm',           group: 'Hình dáng',  unit: '0–1',   desc: 'Mức độ thon dẹt của hình elip (0: tròn hẳn, gần 1: rất thuôn).' },
+  { key: 'ConvexArea',      viName: 'Diện tích bao lồi',     group: 'Kích thước', unit: 'px²',   desc: 'Diện tích phần vỏ lồi nhỏ nhất bọc quanh hạt đậu.' },
+  { key: 'EquivDiameter',   viName: 'Đường kính tương đương', group: 'Kích thước', unit: 'px',   desc: 'Đường kính của hình tròn có cùng diện tích với hạt.' },
+  { key: 'Extent',          viName: 'Độ phủ khung bao',      group: 'Hình dáng',  unit: 'tỉ lệ', desc: 'Tỉ lệ phần hạt chiếm trong khung chữ nhật bao quanh.' },
+  { key: 'Solidity',        viName: 'Độ đặc (đầy đặn)',      group: 'Hình dáng',  unit: 'tỉ lệ', desc: 'Tỉ số Diện tích / Diện tích bao lồi (gần 1 là vỏ ít lõm).' },
+  { key: 'roundness',       viName: 'Độ tròn',               group: 'Hình dáng',  unit: '0–1',   desc: 'Độ tròn chuẩn hóa: 4π · Diện tích / Chu vi².' },
+  { key: 'Compactness',     viName: 'Độ gọn',                group: 'Hình dáng',  unit: 'tỉ lệ', desc: 'Mức độ gọn khối: Đường kính tương đương / Trục chính.' },
+  { key: 'ShapeFactor1',    viName: 'Hệ số hình dạng 1',     group: 'Hệ số SF',   unit: 'px⁻¹',  desc: 'Hệ số dẫn xuất 1: Trục chính / Diện tích.' },
+  { key: 'ShapeFactor2',    viName: 'Hệ số hình dạng 2',     group: 'Hệ số SF',   unit: 'px⁻¹',  desc: 'Hệ số dẫn xuất 2: Trục phụ / Diện tích.' },
+  { key: 'ShapeFactor3',    viName: 'Hệ số hình dạng 3',     group: 'Hệ số SF',   unit: 'tỉ lệ', desc: 'Hệ số dẫn xuất 3: Diện tích / ((Trục chính / 2)² · π).' },
+  { key: 'ShapeFactor4',    viName: 'Hệ số hình dạng 4',     group: 'Hệ số SF',   unit: 'tỉ lệ', desc: 'Hệ số dẫn xuất 4: Diện tích / ((Trục chính/2)(Trục phụ/2)π).' }
 ];
 
 const PCA_VARIANCE_RATIO = [
@@ -53,9 +53,9 @@ const GUIDED_EXPERIMENTS = [
     shortLabel: 'Dữ liệu chuẩn',
     badge: 'CƠ BẢN',
     badgeClass: 'bg-mint',
-    title: 'Trạng thái chuẩn: 7 cụm trên mặt phẳng PC1–PC2',
-    desc: 'Toàn bộ 13.611 hạt đậu được chiếu lên 2 thành phần chính đầu tiên (81.9% phương sai). Quan sát dấu chữ thập (+) của K-Means nằm lơ lửng giữa đám mây điểm, trong khi hạt sáng (◉) của K-Medoids là một hạt đậu có thật.',
-    keyIdea: 'Tâm K-Means là trung bình cộng toán học nên có thể rơi vào vùng không tồn tại hạt nào; Medoid luôn là một hạt đậu thật đại diện cho cụm.',
+    title: 'Trạng thái chuẩn: 7 cụm trên mặt phẳng 2 trục chính (PC1–PC2)',
+    desc: 'Toàn bộ 13.611 hạt đậu được chiếu xuống 2 trục chính (giữ 81.9% lượng thông tin). Dấu chữ thập (+) của K-Means là tâm tính toán ảo nằm giữa khoảng trống, còn chấm sáng (◉) của K-Medoids là một hạt đậu có thật.',
+    keyIdea: 'Tâm K-Means là trung bình cộng toán học nên có thể rơi vào khoảng trống không có hạt nào; Medoid luôn là một hạt đậu thật được chọn làm mẫu đại diện.',
     apply: () => {
       state.k = 7;
       state.pcaDims = 2;
@@ -69,9 +69,9 @@ const GUIDED_EXPERIMENTS = [
     shortLabel: 'Đổi số cụm k',
     badge: 'THAM SỐ k',
     badgeClass: 'bg-yellow',
-    title: 'Thử nghiệm k = 4: Gom theo nhóm kích thước – hình dáng lớn',
-    desc: 'Khi giảm số cụm k từ 7 xuống 4, hai bản đồ đồng loạt chia lại không gian: Bombay tách riêng ở cực phải, Horoz tách ở cực trên, các giống hạt nhỏ gom chung.',
-    keyIdea: 'Chỉ số ARI đạt đỉnh tại k = 7 (khớp với 7 giống đậu thực tế), trong khi Hệ số bóng (Silhouette) ưu tiên các cụm thưa lớn ở k nhỏ.',
+    title: 'Thử nghiệm k = 4: Gom nhóm thô theo cỡ hạt lớn và dáng thuôn',
+    desc: 'Khi giảm số cụm k từ 7 xuống 4, bản đồ gom chung các giống cỡ nhỏ–trung bình lại; chỉ tách riêng hạt siêu lớn Bombay (bên phải) và hạt thuôn dài Horoz (phía trên).',
+    keyIdea: 'Chỉ số ARI (độ khớp 7 giống thật) cao nhất quanh k = 7, trong khi Hệ số bóng (Silhouette — độ tách rời hình học) thường cao hơn ở k nhỏ vì các cụm thưa và tách xa nhau.',
     apply: () => {
       state.k = 4;
       state.pcaDims = 2;
@@ -81,12 +81,12 @@ const GUIDED_EXPERIMENTS = [
   },
   {
     step: 3,
-    shortLabel: 'Giảm chiều PCA',
+    shortLabel: 'Tăng chiều PCA',
     badge: 'CHIỀU PCA',
     badgeClass: 'bg-blue',
-    title: 'Tăng chiều phân cụm lên d = 6 (98.5% phương sai)',
-    desc: 'Phân cụm trên không gian 6 thành phần chính thay vì 2D giúp thuật toán tận dụng thêm thông tin độ đặc (Solidity) và độ lồi để tách ranh giới Cali – Barbunya.',
-    keyIdea: 'Mặt phẳng PC1–PC2 dùng để quan sát trực quan, còn việc gom cụm ở d = 4..6 chiều giúp ARI tăng rõ rệt so với chỉ dùng 2 chiều.',
+    title: 'Gom cụm trong không gian 6 trục chính (giữ 98.9% thông tin)',
+    desc: 'Thay vì chỉ dựa vào 2 trục đầu để tính khoảng cách, dùng 6 trục PCA giúp thuật toán tận dụng thêm thông tin về độ đặc (Solidity) và độ tròn để tách ranh giới hai giống Cali – Barbunya.',
+    keyIdea: 'Bản đồ 2D (PC1–PC2) rất tiện để mắt người quan sát, nhưng chạy thuật toán gom cụm trên 4–7 trục hoặc toàn bộ 16 chiều giữ thông tin đầy đủ hơn.',
     apply: () => {
       state.k = 7;
       state.pcaDims = 6;
@@ -99,9 +99,9 @@ const GUIDED_EXPERIMENTS = [
     shortLabel: 'Tắt chuẩn hóa',
     badge: 'CẢNH BÁO SCALE',
     badgeClass: 'bg-yellow',
-    title: 'Tắt StandardScaler: Cụm sụp về phân lớp theo diện tích',
-    desc: 'Khi tắt chuẩn hóa, cột Area (hàng trăm nghìn px²) áp đảo >99.9% khoảng cách Euclide. Toàn bộ thông tin hình dáng trên trục dọc bị ép bẹp, biến phân cụm thành các lát cắt dọc.',
-    keyIdea: 'Khoảng cách Euclide không bất biến với đơn vị đo. Không chuẩn hóa khiến các đặc trưng tỷ lệ (0–1) trở nên vô hình trước biến diện tích.',
+    title: 'Tắt chuẩn hóa Z-score: Cụm bị sụp, chỉ phân biệt mỗi Diện tích',
+    desc: 'Khi tắt chuẩn hóa, cột Diện tích (Area lên tới ~254.000 px²) lớn gấp hàng triệu lần các hệ số hình dáng (chỉ 0,004 → 1). Khoảng cách bị Diện tích chi phối hoàn toàn, các giống có kích cỡ gần nhau bị trộn lẫn.',
+    keyIdea: 'Chuẩn hóa Z-score (đưa mọi cột về trung bình 0, độ lệch chuẩn 1) là bắt buộc khi các thông số đo có đơn vị và độ lớn chênh lệch nhau.',
     apply: () => {
       state.k = 7;
       state.pcaDims = 2;
@@ -114,9 +114,9 @@ const GUIDED_EXPERIMENTS = [
     shortLabel: 'Tiêm ngoại lai 1%',
     badge: 'ĐIỂM NHẤN',
     badgeClass: 'bg-coral',
-    title: 'Tiêm ngoại lai 1%: Tâm K-Means nhảy lệch, Medoid đứng yên!',
-    desc: 'Chỉ 1% số hạt (136 hạt) bị nhân cột kích thước lên ×10.5 lần. Nhìn bên trái: dấu chữ thập (+) bị kéo bật sang phải và ARI K-Means tụt thảm hại. Nhìn bên phải: hạt sáng Medoid (◉) gần như bất động!',
-    keyIdea: 'K-Means tối thiểu hóa tổng bình phương khoảng cách (nhạy cảm cực độ với ngoại lai); K-Medoids tối thiểu hóa tổng khoảng cách tuyến tính nên kháng nhiễu.',
+    title: 'Tiêm ngoại lai 1%: Tâm K-Means (+) bị kéo lệch, Medoid (◉) đứng yên!',
+    desc: 'Chỉ 1% số hạt (136 hạt) bị phóng đại kích thước bất thường lên ×10.5 lần (lệch hẳn sang phải). Ở bản đồ K-Means bên trái, dấu (+) bị kéo bật ra ngoài đám mây điểm; còn ở bản đồ K-Medoids bên phải, hạt đại diện (◉) vẫn vững vàng!',
+    keyIdea: 'K-Means cộng dồn bình phương khoảng cách (d²) nên điểm ở xa tạo lực kéo rất mạnh; K-Medoids tối thiểu hóa tổng khoảng cách trực tiếp và chỉ chọn từ các hạt thật nên rất bền trước nhiễu.',
     apply: () => {
       state.k = 7;
       state.pcaDims = 2;
@@ -127,11 +127,11 @@ const GUIDED_EXPERIMENTS = [
   {
     step: 6,
     shortLabel: 'Soi 16 số đo',
-    badge: 'KIỂM ĐỊNH HẠT',
+    badge: 'HỒ SƠ HẠT MẪU',
     badgeClass: 'bg-lavender',
-    title: 'Bấm chọn Medoid để đọc đủ 16 thông số hạt mẫu chuẩn',
-    desc: 'Người phân loại nông sản có thể lấy chính hạt Medoid được tô sáng trên bản đồ bên phải để làm mẫu chuẩn đối chiếu trên dây chuyền phân loại thực tế.',
-    keyIdea: 'Tính diễn giải thực tiễn: Medoid cung cấp một mẫu vật thật với đầy đủ 16 số đo vật lý thay vì một vector trung bình không tồn tại.',
+    title: 'Chọn một hạt Medoid (◉) để đọc đủ 16 số đo vật lý làm mẫu chuẩn',
+    desc: 'Khi triển khai ngoài thực tế, kỹ sư nông sản có thể lấy ngay hạt Medoid đang được tô sáng ở cột bên phải làm "hạt mẫu chuẩn" đặt cạnh băng chuyền phân loại để đối chiếu bằng mắt và thước đo.',
+    keyIdea: 'Giá trị diễn giải thực tiễn: Medoid trả về một hạt đậu thật với đầy đủ 16 số đo vật lý cụ thể, không phải một tọa độ trung bình trừu tượng.',
     apply: () => {
       state.k = 7;
       state.pcaDims = 2;

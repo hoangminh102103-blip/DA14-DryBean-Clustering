@@ -1,29 +1,29 @@
 /* =========================================================================
-   1. DESIGN TOKENS — RETRO-TACTILE NEO-BRUTALIST PAPER AESTHETIC
+   1. DESIGN TOKENS — BẢNG MÀU GIẤY SÁNG, TƯƠNG PHẢN RÕ (WCAG AA)
    ========================================================================= */
 :root {
   --bg-paper: #F4F1EA;
-  --bg-panel: #FAF9F5;
-  --bg-canvas: #F9F7F2;
-  --grid-line: #E6E2D8;
-  --ink: #1E201E;
-  --ink-muted: #575852;
-  --ink-subtle: #888880;
-  --border-subtle: #CFCBC0;
+  --bg-panel: #FCFBF8;
+  --bg-canvas: #FAF8F3;
+  --grid-line: #E5E0D5;
+  --ink: #181A18;
+  --ink-muted: #464842;
+  --ink-subtle: #6D6F68;
+  --border-subtle: #C9C4B8;
 
   /* Bảng màu nhấn pastel đặc trưng */
   --mint: #D9F2C6;
-  --mint-strong: #CBE8BA;
+  --mint-strong: #C6E7B0;
   --yellow: #FDF3C7;
   --lavender: #EAE4FA;
   --blue-pastel: #D6ECFA;
-  --coral: #F8C8B8;
+  --coral: #FAD0C3;
   --coral-strong: #F2A891;
 
   /* Màu định danh thuật toán */
-  --kmeans-color: #2563EB;
+  --kmeans-color: #1D4ED8;
   --kmedoids-color: #0F766E;
-  --outlier-color: #DC2626;
+  --outlier-color: #B91C1C;
 
   --border-main: 1.5px solid var(--ink);
   --shadow-hard: 2px 2px 0px var(--ink);
@@ -33,8 +33,9 @@
   --radius-lg: 12px;
   --radius-pill: 999px;
 
-  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Segoe UI', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Cascadia Mono', 'Consolas', 'JetBrains Mono', monospace;
 }
 
 * {
@@ -47,14 +48,23 @@ html, body {
   min-height: 100vh;
   background-color: var(--bg-paper);
   color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.5;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: rgba(24, 26, 24, 0.07);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
 .tabular {
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 

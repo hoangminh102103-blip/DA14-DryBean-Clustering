@@ -13,3 +13,5 @@ results/hinh/*
 !results/hinh/.gitkeep
 results/bang/*
 !results/bang/.gitkeep
+results/mo_hinh/*
+!results/mo_hinh/.gitkeep

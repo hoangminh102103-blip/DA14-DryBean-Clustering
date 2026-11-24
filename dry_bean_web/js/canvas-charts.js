@@ -17,7 +17,7 @@ function drawMetricsCurveChart() {
   }
 
   const w = rect.width, h = rect.height;
-  const padL = 44, padR = 20, padT = 18, padB = 28;
+  const padL = 56, padR = 20, padT = 18, padB = 38;
   const plotW = w - padL - padR;
   const plotH = h - padT - padB;
 
@@ -26,7 +26,7 @@ function drawMetricsCurveChart() {
   ctxCurve.clearRect(0, 0, w, h);
 
   const yMax = 0.85;
-  ctxCurve.font = '10px "JetBrains Mono", monospace';
+  ctxCurve.font = '10.5px Consolas, monospace';
   for (let v = 0; v <= 0.8; v += 0.2) {
     const py = padT + plotH * (1 - v / yMax);
     ctxCurve.strokeStyle = '#E6E2D8';
@@ -36,10 +36,19 @@ function drawMetricsCurveChart() {
     ctxCurve.lineTo(w - padR, py);
     ctxCurve.stroke();
 
-    ctxCurve.fillStyle = '#888880';
+    ctxCurve.fillStyle = '#464842';
     ctxCurve.textAlign = 'right';
-    ctxCurve.fillText(v.toFixed(1), padL - 6, py + 3);
+    ctxCurve.fillText(v.toFixed(1), padL - 7, py + 3);
   }
+
+  ctxCurve.save();
+  ctxCurve.translate(15, padT + plotH / 2);
+  ctxCurve.rotate(-Math.PI / 2);
+  ctxCurve.fillStyle = '#464842';
+  ctxCurve.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  ctxCurve.textAlign = 'center';
+  ctxCurve.fillText('Chỉ số (0 → 1)', 0, 0);
+  ctxCurve.restore();
 
   const getX = (kVal) => padL + ((kVal - 2) / 8) * plotW;
   const getY = (val) => padT + plotH * (1 - Math.max(0, Math.min(yMax, val)) / yMax);
@@ -57,11 +66,16 @@ function drawMetricsCurveChart() {
 
   for (let kVal = 2; kVal <= 10; kVal++) {
     const px = getX(kVal);
-    ctxCurve.fillStyle = kVal === state.k ? '#1E201E' : '#888880';
-    ctxCurve.font = kVal === state.k ? '700 11px "JetBrains Mono", monospace' : '10px "JetBrains Mono", monospace';
+    ctxCurve.fillStyle = kVal === state.k ? '#1E201E' : '#464842';
+    ctxCurve.font = kVal === state.k ? '700 11.5px "Segoe UI", system-ui, sans-serif' : '11px "Segoe UI", system-ui, sans-serif';
     ctxCurve.textAlign = 'center';
-    ctxCurve.fillText(`k=${kVal}`, px, h - 8);
+    ctxCurve.fillText(`k=${kVal}`, px, h - 20);
   }
+
+  ctxCurve.fillStyle = '#464842';
+  ctxCurve.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  ctxCurve.textAlign = 'center';
+  ctxCurve.fillText('Số cụm phân chia (k)', padL + plotW / 2, h - 4);
 
   if (state.curveByK.length > 0) {
     drawCurveSeries(ctxCurve, state.curveByK, 'silhouette', getX, getY, '#D97706', true, 'diamond');
@@ -113,7 +127,7 @@ function bindCurveChartEvents() {
   canvasCurve.addEventListener('pointermove', (e) => {
     const rect = canvasCurve.getBoundingClientRect();
     const mx = e.clientX - rect.left;
-    const padL = 44, padR = 20;
+    const padL = 56, padR = 20;
     const plotW = rect.width - padL - padR;
     const nearestK = Math.round(2 + ((mx - padL) / plotW) * 8);
     const tooltip = document.getElementById('curveTooltip');
@@ -124,10 +138,10 @@ function bindCurveChartEvents() {
       if (item) {
         tooltip.style.display = 'block';
         tooltip.innerHTML = `
-          <div style="font-weight:700; border-bottom:1px solid #575852; padding-bottom:3px; margin-bottom:3px;">Mốc k = ${item.k}</div>
+          <div style="font-weight:700; border-bottom:1px solid #575852; padding-bottom:3px; margin-bottom:3px;">Số cụm k = ${item.k}</div>
           <div style="color:#6EE7B7;">ARI K-Medoids: ${item.ariMedoids.toFixed(3)}</div>
           <div style="color:#93C5FD;">ARI K-Means  : ${item.ariKMeans.toFixed(3)}</div>
-          <div style="color:#FDE68A;">Silhouette   : ${item.silhouette.toFixed(3)}</div>
+          <div style="color:#FDE68A;">Hệ số bóng   : ${item.silhouette.toFixed(3)}</div>
         `;
         tooltip.style.left = `${Math.min(rect.width - 175, Math.max(10, mx + 10))}px`;
         tooltip.style.top = `10px`;
@@ -163,13 +177,13 @@ function drawEdaBoxplot() {
   ctx.scale(dpr, dpr);
 
   const w = rect.width, h = rect.height;
-  const padL = 68, padR = 20, padT = 18, padB = 34;
+  const padL = 78, padR = 20, padT = 18, padB = 38;
   const plotW = w - padL - padR, plotH = h - padT - padB;
 
   const meta = FEATURE_META.find(f => f.key === state.edaFeature);
   const st = featureStats[state.edaFeature];
-  document.getElementById('edaBoxTitle').textContent = `Biểu đồ hộp (Q1–Median–Q3) của ${meta.key} trên 7 giống đậu`;
-  document.getElementById('edaBoxUnit').textContent = state.edaZscore ? 'Đơn vị: Z-score (σ)' : `Đơn vị: ${meta.unit}`;
+  document.getElementById('edaBoxTitle').textContent = `Biểu đồ hộp (trung vị & 25%–75%) của ${meta.viName || meta.key} (${meta.key}) trên 7 giống đậu`;
+  document.getElementById('edaBoxUnit').textContent = state.edaZscore ? 'Đơn vị: Z-score (độ lệch chuẩn σ)' : `Đơn vị đo: ${meta.unit}`;
 
   ctx.fillStyle = '#F9F7F2';
   ctx.fillRect(0, 0, w, h);
@@ -193,7 +207,7 @@ function drawEdaBoxplot() {
   const span = (gMax - gMin) || 1;
   const toY = (val) => padT + plotH * (1 - (val - gMin) / span);
 
-  ctx.font = '10px "JetBrains Mono", monospace';
+  ctx.font = '10.5px Consolas, monospace';
   for (let i = 0; i <= 4; i++) {
     const val = gMin + (i / 4) * span;
     const y = toY(val);
@@ -203,10 +217,19 @@ function drawEdaBoxplot() {
     ctx.lineTo(w - padR, y);
     ctx.stroke();
 
-    ctx.fillStyle = '#575852';
+    ctx.fillStyle = '#464842';
     ctx.textAlign = 'right';
-    ctx.fillText(Math.abs(val) >= 100 ? Math.round(val).toLocaleString('vi-VN') : val.toFixed(2), padL - 6, y + 3);
+    ctx.fillText(Math.abs(val) >= 100 ? Math.round(val).toLocaleString('vi-VN') : val.toFixed(2), padL - 7, y + 3);
   }
+
+  ctx.save();
+  ctx.translate(15, padT + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = '#464842';
+  ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(state.edaZscore ? 'Độ lệch chuẩn (Z-score σ)' : `${meta.viName || meta.key} (${meta.unit})`, 0, 0);
+  ctx.restore();
 
   const colW = plotW / VARIETIES.length;
   statsByVar.forEach((s, idx) => {
@@ -236,10 +259,15 @@ function drawEdaBoxplot() {
     ctx.stroke();
 
     ctx.fillStyle = '#1E201E';
-    ctx.font = '700 10.5px "JetBrains Mono", monospace';
+    ctx.font = '700 11px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(s.v.label, cx, h - 10);
+    ctx.fillText(s.v.label, cx, h - 18);
   });
+
+  ctx.fillStyle = '#464842';
+  ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('7 giống đậu khô (UCI Dry Bean)', padL + plotW / 2, h - 4);
 }
 
 function drawPcaScreeChart() {
@@ -253,13 +281,13 @@ function drawPcaScreeChart() {
   ctx.scale(dpr, dpr);
 
   const w = rect.width, h = rect.height;
-  const padL = 44, padR = 18, padT = 18, padB = 30;
+  const padL = 56, padR = 20, padT = 22, padB = 40;
   const plotW = w - padL - padR, plotH = h - padT - padB;
 
   ctx.fillStyle = '#F9F7F2';
   ctx.fillRect(0, 0, w, h);
 
-  ctx.font = '10px "JetBrains Mono", monospace';
+  ctx.font = '10.5px Consolas, monospace';
   for (let pct = 0; pct <= 100; pct += 25) {
     const y = padT + plotH * (1 - pct / 100);
     ctx.strokeStyle = '#E6E2D8';
@@ -268,10 +296,19 @@ function drawPcaScreeChart() {
     ctx.lineTo(w - padR, y);
     ctx.stroke();
 
-    ctx.fillStyle = '#575852';
+    ctx.fillStyle = '#464842';
     ctx.textAlign = 'right';
-    ctx.fillText(`${pct}%`, padL - 6, y + 3);
+    ctx.fillText(`${pct}%`, padL - 7, y + 3);
   }
+
+  ctx.save();
+  ctx.translate(15, padT + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = '#464842';
+  ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Tỉ lệ phương sai (%)', 0, 0);
+  ctx.restore();
 
   const stepW = plotW / 16;
   let cum = 0;
@@ -284,7 +321,7 @@ function drawPcaScreeChart() {
     const bw = stepW * 0.54;
     const bh = (pct / 100) * plotH;
 
-    ctx.fillStyle = idx < 2 ? '#D9F2C6' : '#E6E2D8';
+    ctx.fillStyle = idx < 2 ? '#D9F2C6' : (idx < 4 ? '#D6ECFA' : '#E6E2D8');
     ctx.strokeStyle = '#1E201E';
     ctx.lineWidth = 1.3;
     ctx.beginPath();
@@ -292,12 +329,18 @@ function drawPcaScreeChart() {
     ctx.fill();
     ctx.stroke();
 
-    pts.push({ x: cx, y: padT + plotH * (1 - cum / 100) });
+    pts.push({ x: cx, y: padT + plotH * (1 - cum / 100), cum });
 
     ctx.fillStyle = '#1E201E';
+    ctx.font = '600 10.5px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`PC${idx + 1}`, cx, h - 10);
+    ctx.fillText(`PC${idx + 1}`, cx, h - 20);
   });
+
+  ctx.fillStyle = '#464842';
+  ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('16 thành phần chính sau PCA (PC1 → PC16)', padL + plotW / 2, h - 4);
 
   ctx.strokeStyle = '#2563EB';
   ctx.lineWidth = 2.2;
@@ -306,13 +349,21 @@ function drawPcaScreeChart() {
   ctx.stroke();
 
   pts.forEach((p, idx) => {
-    ctx.fillStyle = idx === 1 ? '#FDF3C7' : '#FAF9F5';
+    const keyNode = idx === 1 || idx === 3 || idx === 6;
+    ctx.fillStyle = idx === 1 ? '#FDF3C7' : (keyNode ? '#D9F2C6' : '#FAF9F5');
     ctx.strokeStyle = '#1E201E';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, idx === 1 ? 5 : 3.2, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, keyNode ? 5 : 3.2, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
+
+    if (idx === 1 || idx === 3 || idx === 6) {
+      ctx.fillStyle = '#1E201E';
+      ctx.font = '700 10.5px Consolas, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${p.cum.toFixed(1)}%`, p.x, p.y - 9);
+    }
   });
 }
 
@@ -339,7 +390,7 @@ function drawMechanismDemoCanvas() {
     [0.32, 0.52], [0.27, 0.62], [0.35, 0.45], [0.20, 0.49], [0.33, 0.33],
     [0.29, 0.45], [0.26, 0.43], [0.31, 0.58], [0.23, 0.39]
   ];
-  const outlierPt = [0.88, 0.36];
+  const outlierPt = [0.85, 0.38];
   const medoidPt = basePts[10];
 
   const factor = state.mechOutlier ? [0, 0.35, 0.72, 1.0][state.mechIter] : 0;
@@ -370,7 +421,7 @@ function drawMechanismDemoCanvas() {
   basePts.forEach((p, idx) => {
     const px = p[0] * w, py = p[1] * h;
     ctx.beginPath();
-    ctx.ellipse(px, py, 7, 4.8, -0.3, 0, Math.PI * 2);
+    ctx.ellipse(px, py, 7.5, 5, -0.3, 0, Math.PI * 2);
     ctx.fillStyle = idx === 10 ? '#D9F2C6' : '#93C5FD';
     ctx.fill();
     ctx.lineWidth = 1.5;
@@ -388,22 +439,22 @@ function drawMechanismDemoCanvas() {
     ctx.strokeStyle = '#DC2626';
     ctx.stroke();
 
-    ctx.fillStyle = '#1E201E';
-    ctx.font = '700 11px "JetBrains Mono", monospace';
+    ctx.fillStyle = '#991B1B';
+    ctx.font = '700 12px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Hạt ngoại lai (×10 Area)', ox, oy - 16);
+    ctx.fillText('Hạt ngoại lai (×10 kích thước)', ox, oy - 16);
   }
 
   const mx = medoidPt[0] * w, my = medoidPt[1] * h;
   ctx.beginPath();
   ctx.arc(mx, my, 15, 0, Math.PI * 2);
   ctx.strokeStyle = '#0F766E';
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.2;
   ctx.stroke();
   ctx.fillStyle = '#0F766E';
-  ctx.font = '700 11px "JetBrains Mono", monospace';
+  ctx.font = '700 12px "Segoe UI", system-ui, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('◉ Medoid (Đứng yên)', mx, my + 28);
+  ctx.fillText('◉ Medoid (Hạt thật — đứng yên)', mx, my + 28);
 
   ctx.strokeStyle = '#DC2626';
   ctx.lineWidth = 3;
@@ -413,5 +464,6 @@ function drawMechanismDemoCanvas() {
   ctx.stroke();
 
   ctx.fillStyle = '#DC2626';
-  ctx.fillText(`+ Tâm K-Means (Bước lặp ${state.mechIter})`, kmX, kmY - 15);
+  ctx.font = '700 12px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText(`+ Tâm K-Means ảo (Bước ${state.mechIter})`, kmX, kmY - 16);
 }
